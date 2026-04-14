@@ -8,7 +8,7 @@ directories:
 
 files:
   - out/**/*
-  - package.json
+  - "!node_modules"
 
 win:
   target: nsis

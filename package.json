@@ -2,7 +2,7 @@
   "name": "lunar-colony-3000",
   "version": "0.1.0",
   "description": "An Oregon Trail-style text adventure set as a NASA Artemis lunar mission",
-  "main": "./electron/main.ts",
+  "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "dev:web": "vite",
