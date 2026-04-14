@@ -63,7 +63,16 @@ test.describe('Keyboard Navigation', () => {
       return;
     }
 
-    // First option should start focused (aria-selected=true)
+    // Move mouse away from buttons so onMouseEnter doesn't change focusedIdx
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(200);
+
+    // Reset to first item (mouse hover may have shifted focus)
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('ArrowUp');
+    await page.waitForTimeout(200);
+
+    // First option should be focused (aria-selected=true)
     await expect(options.nth(0)).toHaveAttribute('aria-selected', 'true');
 
     // ArrowDown moves focus to second item
