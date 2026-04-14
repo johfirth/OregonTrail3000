@@ -1,0 +1,38 @@
+appId: com.lunarcolony3000.app
+productName: Lunar Colony 3000
+copyright: Copyright © 2026 OregonTrail3000 Team
+
+directories:
+  output: dist/desktop
+  buildResources: resources
+
+files:
+  - out/**/*
+  - package.json
+
+win:
+  target: nsis
+  icon: resources/icon.ico
+
+mac:
+  target:
+    - dmg
+    - zip
+  icon: resources/icon.icns
+  category: public.app-category.games
+
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: resources/icon.png
+  category: Game
+
+nsis:
+  oneClick: true
+  allowToChangeInstallationDirectory: false
+
+publish:
+  provider: github
+  owner: johfirth
+  repo: OregonTrail3000

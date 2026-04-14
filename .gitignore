@@ -7,8 +7,8 @@ __pycache__/
 
 # Build output
 dist/
-build/
 out/
+build/
 
 # IDE
 .vscode/
@@ -31,3 +31,6 @@ coverage/
 
 # Session artifacts (Copilot CLI)
 .copilot/
+
+# Electron
+resources/

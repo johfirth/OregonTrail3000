@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@engine/*": ["src/engine/*"],
+      "@systems/*": ["src/systems/*"],
+      "@content/*": ["src/content/*"],
+      "@ui/*": ["src/ui/*"],
+      "@platform/*": ["src/platform/*"]
+    }
+  },
+  "include": ["src/**/*", "electron/**/*"],
+  "exclude": ["node_modules", "dist", "out"]
+}
