@@ -111,7 +111,7 @@ Artemis Trail reimagines the classic Oregon Trail (1978) as a NASA Artemis lunar
 
 ## 🤖 Built with Agentic Development
 
-This entire project was designed and built using **GitHub Copilot's agentic development** workflow. 10 specialized AI agents collaborate through the `.github/agents/` directory, each with defined ownership boundaries, tools, and expertise.
+This entire project was designed and built using **GitHub Copilot's agentic development** workflow. 14 specialized AI agents collaborate through the `.github/agents/` directory, each with defined ownership boundaries, tools, and expertise.
 
 ### Agent Roster
 
@@ -123,15 +123,21 @@ This entire project was designed and built using **GitHub Copilot's agentic deve
 | 📦 **Content Developer** | Game content data | `src/content/` | file-ops, terminal, code-search, git |
 | 🖥️ **UI Developer** | React interface | `src/ui/` | file-ops, terminal, playwright, git, npm |
 | 🏗️ **Infra Developer** | Build/deploy pipeline | `electron/`, configs | file-ops, terminal, git, npm, docker |
+| 🔒 **Security Developer** | Security fixes only | Security-related files | file-ops, terminal, code-search, git, npm |
 | 🧪 **QA: Gameplay** | Full game loop testing | `tests/e2e/gameplay*` | playwright, terminal, docker |
 | 🧪 **QA: Events** | Event system testing | `tests/e2e/events*` | playwright, terminal, docker |
 | 🧪 **QA: UI** | Screen/navigation testing | `tests/e2e/ui*` | playwright, terminal, docker |
 | 🧪 **QA: Edge Cases** | Boundary/save testing | `tests/e2e/edge*` | playwright, terminal, docker |
+| ♿ **QA: Accessibility** | WCAG 2.1 compliance | `tests/e2e/accessibility*` | playwright, axe-core, terminal, docker |
+| 🔒 **QA: Security** | Vulnerability testing | `tests/e2e/security*` | playwright, terminal, code-search, docker |
+| 📋 **PR Reviewer** | Code review & approval | Pull requests | code-search, terminal, git |
 
 ### Agent Collaboration Model
 - **Game Designer** writes `.md` design documents in `game-design/` — never writes code
 - **Developer agents** read from `game-design/` and implement in `src/`
+- **Security Developer** fixes vulnerabilities only — never changes gameplay
 - **QA agents** use Playwright MCP for live browser automation testing
+- **PR Reviewer** reviews and approves pull requests before merge
 - **Copilot Instructions** (`.github/copilot-instructions.md`) enforce delegation to specialized agents
 
 ### Skills & References
@@ -139,6 +145,7 @@ This entire project was designed and built using **GitHub Copilot's agentic deve
 - **Mechanics Analysis**: Annotated breakdown of all Oregon Trail game systems — `.github/references/oregon-trail-analysis.md`
 - **Design Patterns**: Text adventure design patterns reference — `.github/references/text-adventure-design-patterns.md`
 - **Playwright MCP**: Browser automation via `@playwright/mcp` — configured in `.vscode/mcp.json`
+- **axe-core**: Automated WCAG accessibility auditing via `@axe-core/playwright`
 
 ---
 
@@ -146,17 +153,21 @@ This entire project was designed and built using **GitHub Copilot's agentic deve
 
 ```
 .github/
-├── agents/              # 10 specialized AI agent definitions
+├── agents/              # 14 specialized AI agent definitions
 │   ├── game-designer.agent.md
 │   ├── game-engine-dev.agent.md
 │   ├── game-systems-dev.agent.md
 │   ├── game-content-dev.agent.md
 │   ├── game-ui-dev.agent.md
 │   ├── game-infra-dev.agent.md
+│   ├── security-dev.agent.md
 │   ├── qa-gameplay.agent.md
 │   ├── qa-events.agent.md
 │   ├── qa-ui.agent.md
-│   └── qa-edge-cases.agent.md
+│   ├── qa-edge-cases.agent.md
+│   ├── qa-accessibility.agent.md
+│   ├── qa-security.agent.md
+│   └── qa-pr-reviewer.agent.md
 ├── instructions/        # Scoped Copilot instructions
 ├── references/          # Oregon Trail source + design patterns
 └── copilot-instructions.md  # Repo-wide agent rules
@@ -227,10 +238,22 @@ npm test
 ```
 
 ### Test Coverage
-- **24 E2E tests** covering full playthroughs, phase transitions, defeat paths, and UI interactions
+- **187 unit tests** (Vitest) covering engine, systems, and content
+- **49 E2E tests** (Playwright) covering gameplay, accessibility, keyboard, security, and UI
+- **Total: 236 tests** across unit and E2E suites
 - **Headed mode** with `slowMo: 300ms` so you can watch the game being played
 - **Video recording** and screenshots captured for every test run
 - **Traces** available for debugging: `npx playwright show-trace test-results/*/trace.zip`
+
+#### Test Suites
+| Suite | Tests | Focus |
+|-------|-------|-------|
+| Unit (Vitest) | 187 | Engine, systems, content validation |
+| E2E: Gameplay | 16 | Full playthroughs, phase transitions |
+| E2E: Accessibility | 10 | WCAG 2.1, axe-core, color contrast |
+| E2E: Keyboard | 10 | Number keys, arrows, Enter, Escape |
+| E2E: Security | 7 | XSS, injection, localStorage, CSP |
+| E2E: Other | 6 | UI rendering, navigation, edge cases |
 
 ---
 

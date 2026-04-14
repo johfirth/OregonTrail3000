@@ -22,10 +22,14 @@ This project uses 10 specialized agents. When a task comes in, identify which ag
 | **Content Developer** | `game-content-dev.agent.md` | `src/content/` | JSON/TS content data, schemas, validation |
 | **UI Developer** | `game-ui-dev.agent.md` | `src/ui/` | React components, screens, hooks, styling |
 | **Infra Developer** | `game-infra-dev.agent.md` | `electron/`, configs | Electron, Vite, Docker, CI/CD, build pipeline |
+| **Security Developer** | `security-dev.agent.md` | Security-related files | Security fixes only — never changes gameplay |
 | **QA: Gameplay** | `qa-gameplay.agent.md` | `tests/e2e/gameplay*` | Full game loop testing, win/loss paths |
 | **QA: Events** | `qa-events.agent.md` | `tests/e2e/events*` | Event system testing, choices, chains |
 | **QA: UI** | `qa-ui.agent.md` | `tests/e2e/ui*` | Screen rendering, navigation, styling |
 | **QA: Edge Cases** | `qa-edge-cases.agent.md` | `tests/e2e/edge*` | Save/load, boundaries, state consistency |
+| **QA: Accessibility** | `qa-accessibility.agent.md` | `tests/e2e/accessibility*` | WCAG 2.1 compliance, axe-core audits |
+| **QA: Security** | `qa-security.agent.md` | `tests/e2e/security*` | XSS, injection, CSP, Electron security |
+| **PR Reviewer** | `qa-pr-reviewer.agent.md` | Pull requests | Code review, test verification, merge approval |
 
 ### Delegation Rules
 
@@ -34,7 +38,10 @@ This project uses 10 specialized agents. When a task comes in, identify which ag
 3. **Respect ownership boundaries** — Engine Dev doesn't touch `src/ui/`, UI Dev doesn't touch `src/engine/`
 4. **QA agents use Playwright MCP** — they have live browser automation via the Playwright MCP server
 5. **Game Designer writes only .md files** — never code, never tests
-6. **Chain dependencies** — if UI depends on engine changes, dispatch Engine Dev first, then UI Dev
+6. **Security Developer fixes vulnerabilities only** — never changes gameplay, mechanics, or content
+7. **Chain dependencies** — if UI depends on engine changes, dispatch Engine Dev first, then UI Dev
+8. **PR Reviewer reviews all PRs** — add review comment with test results before merging
+9. **File GitHub issues for all bugs** — QA agents file with details, Dev agents comment with fix details
 
 ### When to Use Which Agent
 
@@ -45,9 +52,13 @@ This project uses 10 specialized agents. When a task comes in, identify which ag
 | "Change resource balance" | Content Dev (constants) or Engine Dev (formulas) |
 | "Add a new screen" | UI Dev |
 | "Fix build/deploy" | Infra Dev |
-| "Test the game" | QA agents (all 4 in parallel) |
+| "Test the game" | QA agents (all 7 in parallel) |
 | "Design a new feature" | Game Designer → then Dev agents to implement |
 | "Update difficulty" | Engine Dev (types.ts constants) |
+| "Fix a security issue" | Security Dev |
+| "Accessibility audit" | QA: Accessibility → then UI Dev or Security Dev to fix |
+| "Security audit" | QA: Security → then Security Dev to fix |
+| "Review a PR" | PR Reviewer |
 
 ## MCP Server Configuration
 
@@ -73,18 +84,21 @@ The project uses the Playwright MCP server for browser automation in QA testing.
    — OR — `docker run -p 8080:80 artemis-trail` (Docker container)
 2. QA agents connect via Playwright MCP to automate browser testing
 3. E2E tests live in `tests/e2e/` and run with `npx playwright test`
-4. Tests validate: title screen → mission prep → launch → transit → gateway → landing → surface → colony/defeat
+4. Test suites: gameplay, accessibility (axe-core), keyboard navigation, security (XSS/injection), UI rendering
+5. Electron tests: `npx playwright test --project=electron`
 
 ## Project Structure
 
 ```
 .github/
-├── agents/              # 10 specialized agent definitions
+├── agents/              # 14 specialized agent definitions
 ├── instructions/        # Scoped instructions (game-design, development)
 ├── references/          # Oregon Trail source, design patterns
 └── copilot-instructions.md  # THIS FILE — repo-wide rules
 
 electron/                # Electron desktop shell (main.ts, preload.ts)
+nginx.conf               # Security-hardened nginx config (CSP, security headers)
+Dockerfile               # Non-root nginx container
 src/
 ├── engine/              # Pure TS game engine (no DOM/Electron deps)
 ├── systems/             # 7 game systems
