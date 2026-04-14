@@ -55,6 +55,8 @@ export function useGameEngine() {
       });
       return true;
     } catch {
+      // Remove corrupted/invalid save data so future loads don't fail repeatedly
+      try { localStorage.removeItem('artemis-trail-save'); } catch { /* ignore */ }
       return false;
     }
   }, [engine]);
