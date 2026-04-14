@@ -109,7 +109,7 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
               aria-selected={isSelected}
               aria-label={`${idx + 1}. ${site.name}: ${site.description}`}
               tabIndex={isFocused ? 0 : -1}
-              onClick={() => { setSelectedId(site.id); setFocusedIdx(idx); }}
+              onClick={() => { setSelectedId(site.id); setFocusedIdx(idx); (document.activeElement as HTMLElement)?.blur(); }}
               onMouseEnter={() => { setHoveredId(site.id); setFocusedIdx(idx); }}
               onMouseLeave={() => setHoveredId(null)}
               style={{
@@ -181,7 +181,7 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
 
       <div style={{ textAlign: 'center' }}>
         <button
-          onClick={handleSelect}
+          onClick={() => { handleSelect(); (document.activeElement as HTMLElement)?.blur(); }}
           disabled={!selectedId}
           aria-label="Confirm landing site selection"
           onMouseEnter={() => setHoveredBtn('select')}

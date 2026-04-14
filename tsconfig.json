@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["vitest/globals"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

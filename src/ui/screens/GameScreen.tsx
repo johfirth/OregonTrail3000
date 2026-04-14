@@ -337,7 +337,7 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                       aria-label={`${idx + 1}. ${action.label}${action.description ? ': ' + action.description : ''}${!isEnabled ? ' (disabled)' : ''}`}
                       tabIndex={isFocused ? 0 : -1}
                       disabled={!isEnabled}
-                      onClick={() => handleAction(action, idx)}
+                      onClick={() => { handleAction(action, idx); (document.activeElement as HTMLElement)?.blur(); }}
                       onMouseEnter={() => { setHoveredIdx(idx); setFocusedIdx(idx); }}
                       onMouseLeave={() => setHoveredIdx(null)}
                       title={action.disabledReason || action.description}

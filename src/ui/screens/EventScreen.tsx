@@ -154,6 +154,7 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
                         eventId: event.id,
                         choiceId: choice.id,
                       });
+                      (document.activeElement as HTMLElement)?.blur();
                     }}
                     onMouseEnter={() => { setHoveredIdx(idx); setFocusedIdx(idx); }}
                     onMouseLeave={() => setHoveredIdx(null)}

@@ -181,7 +181,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
               return (
                 <button
                   key={diff}
-                  onClick={() => setDifficulty(diff)}
+                  onClick={() => { setDifficulty(diff); (document.activeElement as HTMLElement)?.blur(); }}
                   onMouseEnter={() => setHoveredBtn(diff)}
                   onMouseLeave={() => setHoveredBtn(null)}
                   style={{
