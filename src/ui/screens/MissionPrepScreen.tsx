@@ -159,14 +159,14 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
       maxWidth: '900px',
       margin: '0 auto',
     }}>
-      <h2 style={{
+      <h1 style={{
         ...BASE_STYLES.heading,
         textAlign: 'center',
         marginBottom: '4px',
         fontSize: '18px',
       }}>
         ═══ MISSION PREPARATION ═══
-      </h2>
+      </h1>
       <p style={{ color: COLORS.textDim, textAlign: 'center', marginBottom: '20px', fontSize: '12px' }}>
         Allocate your {totalBudget} CR budget across mission resources. Choose wisely — every credit counts.
       </p>
@@ -241,6 +241,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
                   onChange={(e) => setUnits(idx, parseInt(e.target.value) || 0)}
                   min={0}
                   max={a.maxUnits}
+                  aria-label={a.label}
                   style={{
                     ...BASE_STYLES.input,
                     width: '70px',

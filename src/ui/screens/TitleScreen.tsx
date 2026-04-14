@@ -123,7 +123,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
         textAlign: 'center',
       }}>
         {/* ASCII Title */}
-        <pre style={{
+        <h1 style={{
           color: COLORS.text,
           fontSize: '16px',
           lineHeight: '1.2',
@@ -131,9 +131,11 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
           marginBottom: '8px',
           textShadow: `0 0 15px rgba(0, 180, 216, 0.5)`,
           fontFamily: FONTS.mono,
+          fontWeight: 'normal',
+          whiteSpace: 'pre',
         }}>
           {ASCII_TITLE}
-        </pre>
+        </h1>
 
         <p style={{
           color: COLORS.info,
