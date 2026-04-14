@@ -14,7 +14,11 @@ export default function NarrativeLog({ entries }: NarrativeLogProps): React.Reac
   }, [entries.length]);
 
   return (
-    <div style={{
+    <div
+      role="log"
+      aria-live="polite"
+      aria-label="Mission narrative log"
+      style={{
       flex: 1,
       overflow: 'auto',
       padding: '12px',

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type { GameConfig } from '../../engine/types';
 import { Difficulty } from '../../engine/types';
 import { COLORS, FONTS, BASE_STYLES } from '../styles';
@@ -53,6 +53,20 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
       commanderName: commanderName.trim(),
     });
   }, [commanderName, difficulty, onStartGame]);
+
+  // Keyboard shortcut: Escape from intro goes back
+  useEffect(() => {
+    if (!showIntro) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' || e.key === 'Enter') {
+        e.preventDefault();
+        setShowIntro(false);
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showIntro]);
 
   if (showIntro) {
     return (

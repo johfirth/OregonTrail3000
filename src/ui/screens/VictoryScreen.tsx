@@ -48,6 +48,18 @@ export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPl
 
   const [hoveredBtn, setHoveredBtn] = React.useState<string | null>(null);
 
+  // Enter key to play again
+  React.useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onPlayAgain();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onPlayAgain]);
+
   return (
     <div style={{
       ...BASE_STYLES.container,
@@ -173,6 +185,7 @@ export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPl
       {/* Play Again */}
       <button
         onClick={onPlayAgain}
+        aria-label="Play again"
         onMouseEnter={() => setHoveredBtn('again')}
         onMouseLeave={() => setHoveredBtn(null)}
         style={{
@@ -185,6 +198,19 @@ export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPl
       >
         🚀 PLAY AGAIN
       </button>
+      {/* Keyboard help hint */}
+      <div
+        aria-hidden="true"
+        style={{
+          color: COLORS.muted,
+          fontSize: '10px',
+          textAlign: 'center',
+          marginTop: '8px',
+          letterSpacing: '0.5px',
+        }}
+      >
+        Press Enter to play again
+      </div>
     </div>
   );
 }

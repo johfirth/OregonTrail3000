@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type { GameState, GameCommand, Resources } from '../../engine/types';
 import { ResourceType, ConsumptionLevel, RESOURCE_COSTS, DIFFICULTY_MODIFIERS } from '../../engine/types';
 import { COLORS, FONTS, BASE_STYLES } from '../styles';
@@ -134,6 +134,21 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
     commands.push({ type: 'START_MISSION' });
     onCommands(commands);
   }, [allocations, consumption, remaining, isOverBudget, hasMinFuel, onCommands, state.consumptionLevel]);
+
+  // Enter key launches mission
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === 'Enter' && !isOverBudget && hasMinFuel) {
+        e.preventDefault();
+        handleLaunch();
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleLaunch, isOverBudget, hasMinFuel]);
 
   return (
     <div style={{
@@ -310,6 +325,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
         <button
           onClick={handleLaunch}
           disabled={isOverBudget || !hasMinFuel}
+          aria-label="Launch mission"
           onMouseEnter={() => setHoveredBtn('launch')}
           onMouseLeave={() => setHoveredBtn(null)}
           style={{
@@ -329,6 +345,19 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
             Minimum 200 Fuel Units required for launch
           </div>
         )}
+        {/* Keyboard help hint */}
+        <div
+          aria-hidden="true"
+          style={{
+            color: COLORS.muted,
+            fontSize: '10px',
+            textAlign: 'center',
+            marginTop: '8px',
+            letterSpacing: '0.5px',
+          }}
+        >
+          Press Enter to launch
+        </div>
       </div>
     </div>
   );

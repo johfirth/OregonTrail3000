@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import type { GameState, GameCommand, GameAction, NarrativeEntry } from '../../engine/types';
 import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, ResourceType } from '../../engine/types';
 import StatusBar from '../components/StatusBar';
@@ -16,6 +16,7 @@ interface GameScreenProps {
 export default function GameScreen({ state, narrative, actions, onCommand }: GameScreenProps): React.ReactElement {
   const [showCrew, setShowCrew] = useState(true);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [focusedIdx, setFocusedIdx] = useState<number>(0);
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
   const [fuelInput, setFuelInput] = useState('15');
   const [descentFuelInput, setDescentFuelInput] = useState('60');
@@ -146,6 +147,50 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
     onCommand({ type: 'SAVE_GAME' });
   }, [onCommand]);
 
+  // Reset focused index when available actions change
+  useEffect(() => {
+    setFocusedIdx(0);
+  }, [displayActions.length]);
+
+  // Keyboard navigation for action menu
+  useEffect(() => {
+    if (isAwaitingEvaResult || displayActions.length === 0) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      // Number keys 1-9 → directly trigger action
+      if (e.key >= '1' && e.key <= '9') {
+        const idx = parseInt(e.key) - 1;
+        if (idx < displayActions.length && displayActions[idx].enabled) {
+          e.preventDefault();
+          handleAction(displayActions[idx], idx);
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          setFocusedIdx(prev => Math.max(0, prev - 1));
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setFocusedIdx(prev => Math.min(displayActions.length - 1, prev + 1));
+          break;
+        case 'Enter':
+          if (focusedIdx < displayActions.length && displayActions[focusedIdx].enabled) {
+            e.preventDefault();
+            handleAction(displayActions[focusedIdx], focusedIdx);
+          }
+          break;
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isAwaitingEvaResult, displayActions, handleAction, focusedIdx]);
+
   return (
     <div style={{
       ...BASE_STYLES.container,
@@ -274,17 +319,26 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
               <div style={{ color: COLORS.textDim, marginBottom: '4px', fontSize: '11px' }}>
                 ─── AVAILABLE ACTIONS ───
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+              <div
+                role="listbox"
+                aria-label="Available actions"
+                style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}
+              >
                 {displayActions.map((action, idx) => {
                   const isHovered = hoveredIdx === idx;
+                  const isFocused = focusedIdx === idx;
                   const isEnabled = action.enabled;
 
                   return (
                     <button
                       key={`${action.command}-${action.label}-${idx}`}
+                      role="option"
+                      aria-selected={isFocused}
+                      aria-label={`${idx + 1}. ${action.label}${action.description ? ': ' + action.description : ''}${!isEnabled ? ' (disabled)' : ''}`}
+                      tabIndex={isFocused ? 0 : -1}
                       disabled={!isEnabled}
                       onClick={() => handleAction(action, idx)}
-                      onMouseEnter={() => setHoveredIdx(idx)}
+                      onMouseEnter={() => { setHoveredIdx(idx); setFocusedIdx(idx); }}
                       onMouseLeave={() => setHoveredIdx(null)}
                       title={action.disabledReason || action.description}
                       style={{
@@ -294,14 +348,16 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                         display: 'flex',
                         gap: '8px',
                         alignItems: 'baseline',
-                        ...(isHovered && isEnabled ? {
+                        ...((isHovered || isFocused) && isEnabled ? {
                           backgroundColor: COLORS.buttonHover,
                           color: COLORS.text,
+                          outline: isFocused ? `1px solid ${COLORS.highlight}` : 'none',
+                          outlineOffset: '-1px',
                         } : {}),
                       }}
                     >
                       <span style={{
-                        color: isHovered && isEnabled ? COLORS.highlight : COLORS.highlight,
+                        color: (isHovered || isFocused) && isEnabled ? COLORS.highlight : COLORS.highlight,
                         minWidth: '24px',
                       }}>
                         ({idx + 1})
@@ -311,13 +367,27 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                       </span>
                       <span style={{
                         fontSize: '11px',
-                        color: isHovered && isEnabled ? COLORS.textDim : COLORS.muted,
+                        color: (isHovered || isFocused) && isEnabled ? COLORS.textDim : COLORS.muted,
                       }}>
                         {action.description}
                       </span>
                     </button>
                   );
                 })}
+              </div>
+
+              {/* Keyboard help hint */}
+              <div
+                aria-hidden="true"
+                style={{
+                  color: COLORS.muted,
+                  fontSize: '10px',
+                  textAlign: 'center',
+                  marginTop: '6px',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                [1-9] Select Action  │  ↑↓ Navigate  │  Enter Confirm
               </div>
 
               {/* Save button */}

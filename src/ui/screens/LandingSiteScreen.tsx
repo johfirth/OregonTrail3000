@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { GameState, GameCommand, LandingSite } from '../../engine/types';
 import { LANDING_SITES } from '../../engine/types';
 import { COLORS, FONTS, BASE_STYLES } from '../styles';
@@ -17,12 +17,59 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
+  const [focusedIdx, setFocusedIdx] = useState<number>(0);
 
   const handleSelect = () => {
     if (selectedId) {
       onCommand({ type: 'SELECT_LANDING_SITE', siteId: selectedId });
     }
   };
+
+  // Keyboard navigation for landing sites
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      // Number keys 1-9 → select site
+      if (e.key >= '1' && e.key <= '9') {
+        const idx = parseInt(e.key) - 1;
+        if (idx < LANDING_SITES.length) {
+          e.preventDefault();
+          setSelectedId(LANDING_SITES[idx].id);
+          setFocusedIdx(idx);
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          setFocusedIdx(prev => {
+            const next = Math.max(0, prev - 1);
+            setSelectedId(LANDING_SITES[next].id);
+            return next;
+          });
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setFocusedIdx(prev => {
+            const next = Math.min(LANDING_SITES.length - 1, prev + 1);
+            setSelectedId(LANDING_SITES[next].id);
+            return next;
+          });
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (selectedId) {
+            onCommand({ type: 'SELECT_LANDING_SITE', siteId: selectedId });
+          }
+          break;
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [selectedId, onCommand, focusedIdx]);
 
   return (
     <div style={{
@@ -45,29 +92,40 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
         Choose your landing site carefully. Each location has different advantages and risks.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-        {LANDING_SITES.map((site) => {
+      <div
+        role="listbox"
+        aria-label="Landing site options"
+        style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}
+      >
+        {LANDING_SITES.map((site, idx) => {
           const isSelected = selectedId === site.id;
           const isHovered = hoveredId === site.id;
+          const isFocused = focusedIdx === idx;
 
           return (
             <div
               key={site.id}
-              onClick={() => setSelectedId(site.id)}
-              onMouseEnter={() => setHoveredId(site.id)}
+              role="option"
+              aria-selected={isSelected}
+              aria-label={`${idx + 1}. ${site.name}: ${site.description}`}
+              tabIndex={isFocused ? 0 : -1}
+              onClick={() => { setSelectedId(site.id); setFocusedIdx(idx); }}
+              onMouseEnter={() => { setHoveredId(site.id); setFocusedIdx(idx); }}
               onMouseLeave={() => setHoveredId(null)}
               style={{
                 ...BASE_STYLES.panel,
                 cursor: 'pointer',
                 border: isSelected
                   ? `2px solid ${COLORS.accent}`
-                  : isHovered
+                  : (isHovered || isFocused)
                     ? `1px solid ${COLORS.info}`
                     : `1px solid ${COLORS.border}`,
                 padding: isSelected ? '11px' : '12px',
                 display: 'grid',
                 gridTemplateColumns: '200px 1fr',
                 gap: '16px',
+                outline: isFocused && !isSelected ? `1px solid ${COLORS.highlight}` : 'none',
+                outlineOffset: '-1px',
               }}
             >
               <div>
@@ -77,6 +135,7 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
                   fontWeight: 'bold',
                   marginBottom: '8px',
                 }}>
+                  <span style={{ color: COLORS.highlight, marginRight: '6px' }}>({idx + 1})</span>
                   {isSelected && '▶ '}{site.name}
                 </div>
                 <div style={{ fontSize: '11px', color: COLORS.muted, lineHeight: '1.5' }}>
@@ -124,6 +183,7 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
         <button
           onClick={handleSelect}
           disabled={!selectedId}
+          aria-label="Confirm landing site selection"
           onMouseEnter={() => setHoveredBtn('select')}
           onMouseLeave={() => setHoveredBtn(null)}
           style={{
@@ -136,6 +196,19 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
         >
           🌑 CONFIRM LANDING SITE
         </button>
+        {/* Keyboard help hint */}
+        <div
+          aria-hidden="true"
+          style={{
+            color: COLORS.muted,
+            fontSize: '10px',
+            textAlign: 'center',
+            marginTop: '8px',
+            letterSpacing: '0.5px',
+          }}
+        >
+          [1-{LANDING_SITES.length}] Select Site  │  ↑↓ Navigate  │  Enter Confirm
+        </div>
       </div>
     </div>
   );

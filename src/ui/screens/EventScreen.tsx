@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { GameState, GameCommand, GameEvent, EventChoice } from '../../engine/types';
 import { EventSeverity } from '../../engine/types';
 import { COLORS, FONTS, BASE_STYLES } from '../styles';
@@ -27,6 +27,53 @@ const SEVERITY_LABELS: Record<EventSeverity, string> = {
 
 export default function EventScreen({ state, event, onCommand }: EventScreenProps): React.ReactElement {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [focusedIdx, setFocusedIdx] = useState<number>(0);
+
+  const choices = event.choices || [];
+
+  // Reset focus when choices change
+  useEffect(() => {
+    setFocusedIdx(0);
+  }, [event.id]);
+
+  // Keyboard navigation for event choices
+  useEffect(() => {
+    if (choices.length === 0) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      // Number keys 1-9 → directly select choice
+      if (e.key >= '1' && e.key <= '9') {
+        const idx = parseInt(e.key) - 1;
+        if (idx < choices.length) {
+          e.preventDefault();
+          onCommand({ type: 'EVENT_CHOICE', eventId: event.id, choiceId: choices[idx].id });
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          setFocusedIdx(prev => Math.max(0, prev - 1));
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setFocusedIdx(prev => Math.min(choices.length - 1, prev + 1));
+          break;
+        case 'Enter':
+          if (focusedIdx < choices.length) {
+            e.preventDefault();
+            onCommand({ type: 'EVENT_CHOICE', eventId: event.id, choiceId: choices[focusedIdx].id });
+          }
+          break;
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [choices, event.id, onCommand, focusedIdx]);
 
   const severityColor = SEVERITY_COLORS[event.severity] || COLORS.warning;
 
@@ -86,12 +133,21 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
             <div style={{ color: COLORS.textDim, fontSize: '11px', marginBottom: '8px' }}>
               ─── CHOOSE YOUR RESPONSE ───
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div
+              role="listbox"
+              aria-label="Event response choices"
+              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+            >
               {event.choices.map((choice, idx) => {
                 const isHovered = hoveredIdx === idx;
+                const isFocused = focusedIdx === idx;
                 return (
                   <button
                     key={choice.id}
+                    role="option"
+                    aria-selected={isFocused}
+                    aria-label={`${idx + 1}. ${choice.text}`}
+                    tabIndex={isFocused ? 0 : -1}
                     onClick={() => {
                       onCommand({
                         type: 'EVENT_CHOICE',
@@ -99,21 +155,23 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
                         choiceId: choice.id,
                       });
                     }}
-                    onMouseEnter={() => setHoveredIdx(idx)}
+                    onMouseEnter={() => { setHoveredIdx(idx); setFocusedIdx(idx); }}
                     onMouseLeave={() => setHoveredIdx(null)}
                     style={{
                       ...BASE_STYLES.button,
                       textAlign: 'left',
                       padding: '10px 16px',
                       borderColor: severityColor,
-                      ...(isHovered ? {
+                      ...((isHovered || isFocused) ? {
                         backgroundColor: COLORS.buttonHover,
                         color: COLORS.text,
+                        outline: isFocused ? `1px solid ${COLORS.highlight}` : 'none',
+                        outlineOffset: '-1px',
                       } : {}),
                     }}
                   >
                     <span style={{
-                      color: isHovered ? COLORS.highlight : COLORS.highlight,
+                      color: (isHovered || isFocused) ? COLORS.highlight : COLORS.highlight,
                       marginRight: '8px',
                     }}>
                       ({idx + 1})
@@ -122,6 +180,19 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
                   </button>
                 );
               })}
+            </div>
+            {/* Keyboard help hint */}
+            <div
+              aria-hidden="true"
+              style={{
+                color: COLORS.muted,
+                fontSize: '10px',
+                textAlign: 'center',
+                marginTop: '8px',
+                letterSpacing: '0.5px',
+              }}
+            >
+              [1-{event.choices.length}] Select  │  ↑↓ Navigate  │  Enter Confirm
             </div>
           </div>
         )}

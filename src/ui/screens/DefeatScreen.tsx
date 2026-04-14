@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { GameState } from '../../engine/types';
 import { COLORS, FONTS, BASE_STYLES } from '../styles';
 import { NARRATIVE } from '../../content/narrative';
@@ -17,6 +17,43 @@ export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps):
 
   const debrief = NARRATIVE.deathDebrief;
   const questionsList = [...debrief.questions];
+
+  // Keyboard navigation for debrief
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      const isQuestionStage = stage === 'q1' || stage === 'q2' || stage === 'q3';
+      const isContinueStage = stage === 'intro' || stage === 'a1' || stage === 'a2' || stage === 'a3' || stage === 'signature';
+
+      switch (e.key) {
+        case '1':
+          if (isQuestionStage) {
+            e.preventDefault();
+            handleAnswer(true);
+          }
+          break;
+        case '2':
+          if (isQuestionStage) {
+            e.preventDefault();
+            handleAnswer(false);
+          }
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (isContinueStage) {
+            handleNext();
+          }
+          if (stage === 'done') {
+            onPlayAgain();
+          }
+          break;
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [stage]);
 
   const handleAnswer = (yes: boolean) => {
     const newAnswers = [...answers, yes];
@@ -122,8 +159,15 @@ export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps):
               }}>
                 Senator: "{questionsList[currentQuestion].question}"
               </p>
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <div
+                role="listbox"
+                aria-label="Answer options"
+                style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}
+              >
                 <button
+                  role="option"
+                  aria-selected={false}
+                  aria-label="1. Yes"
                   onClick={() => handleAnswer(true)}
                   onMouseEnter={() => setHoveredBtn('yes')}
                   onMouseLeave={() => setHoveredBtn(null)}
@@ -133,9 +177,12 @@ export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps):
                     ...(hoveredBtn === 'yes' ? BASE_STYLES.buttonHover : {}),
                   }}
                 >
-                  YES
+                  (1) YES
                 </button>
                 <button
+                  role="option"
+                  aria-selected={false}
+                  aria-label="2. No"
                   onClick={() => handleAnswer(false)}
                   onMouseEnter={() => setHoveredBtn('no')}
                   onMouseLeave={() => setHoveredBtn(null)}
@@ -145,8 +192,21 @@ export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps):
                     ...(hoveredBtn === 'no' ? BASE_STYLES.buttonHover : {}),
                   }}
                 >
-                  NO
+                  (2) NO
                 </button>
+              </div>
+              {/* Keyboard help hint */}
+              <div
+                aria-hidden="true"
+                style={{
+                  color: COLORS.muted,
+                  fontSize: '10px',
+                  textAlign: 'center',
+                  marginTop: '8px',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                [1] Yes  │  [2] No
               </div>
             </>
           )}
