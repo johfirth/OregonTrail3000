@@ -122,6 +122,17 @@ docs/                    # Architecture documentation
 - Desktop: `npm run build:desktop` → installers in `dist/desktop/`
 - Dev: `npm run dev:web` (browser) or `npm run dev` (Electron)
 
+### Build Checklist (ALWAYS do ALL of these after code changes)
+1. `npx tsc --noEmit` — verify TypeScript compiles
+2. `npm run build:web` — rebuild web static files
+3. `docker stop artemis-trail && docker rm artemis-trail` — remove old container
+4. `docker build -t artemis-trail .` — rebuild Docker image
+5. `docker run -d -p 8080:80 --name artemis-trail artemis-trail` — start new container
+6. `npx electron-vite build` — rebuild Electron renderer
+7. Remove old Electron build: `Remove-Item -Recurse -Force dist/desktop -ErrorAction SilentlyContinue`
+8. Build new Electron exe: `$env:CSC_IDENTITY_AUTO_DISCOVERY="false"; npx electron-builder --win portable --config electron-builder.yml --config.win.signAndEditExecutable=false`
+9. `npx playwright test --project=headed` — run E2E tests against Docker container
+
 ## Communication Between Agents
 
 - `game-design/` is the shared collaboration folder — designers write, developers read
