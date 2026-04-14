@@ -122,16 +122,26 @@ docs/                    # Architecture documentation
 - Desktop: `npm run build:desktop` → installers in `dist/desktop/`
 - Dev: `npm run dev:web` (browser) or `npm run dev` (Electron)
 
-### Build Checklist (ALWAYS do ALL of these after code changes)
+### Build Checklist — MANDATORY after ANY code change
+
+**⚠️ CRITICAL: You MUST rebuild ALL targets after ANY code change, bug fix, or test fix. The game runs from built artifacts (dist/web for Docker, out/ for Electron, dist/desktop for exe). If you change source code but don't rebuild, users will see the OLD version. NEVER skip this step.**
+
+Run these commands in order after every code change:
 1. `npx tsc --noEmit` — verify TypeScript compiles
 2. `npm run build:web` — rebuild web static files
-3. `docker stop artemis-trail && docker rm artemis-trail` — remove old container
+3. `docker stop artemis-trail; docker rm artemis-trail` — remove old container
 4. `docker build -t artemis-trail .` — rebuild Docker image
 5. `docker run -d -p 8080:80 --name artemis-trail artemis-trail` — start new container
 6. `npx electron-vite build` — rebuild Electron renderer
 7. Remove old Electron build: `Remove-Item -Recurse -Force dist/desktop -ErrorAction SilentlyContinue`
-8. Build new Electron exe: `$env:CSC_IDENTITY_AUTO_DISCOVERY="false"; npx electron-builder --win portable --config electron-builder.yml --config.win.signAndEditExecutable=false`
-9. `npx playwright test --project=headed` — run E2E tests against Docker container
+8. `npm rebuild app-builder-bin` — ensure builder binary is fresh
+9. `$env:CSC_IDENTITY_AUTO_DISCOVERY="false"; npx electron-builder --win dir --config electron-builder.yml --config.win.signAndEditExecutable=false` — build Electron exe
+10. `npx vitest run` — run unit tests (187 tests)
+11. `npx playwright test --project=headed` — run E2E tests against Docker
+12. `npx playwright test --project=electron` — run Electron tests
+13. `git add . && git commit && git push origin master` — push to GitHub
+
+**If you skip rebuilding, the deployed game will NOT reflect your code changes.**
 
 ## Communication Between Agents
 
