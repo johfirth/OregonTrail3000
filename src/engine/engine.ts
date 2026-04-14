@@ -221,6 +221,14 @@ function getAvailableActions(state: GameState): GameAction[] {
         description: 'Adjust life support consumption',
         enabled: true,
       });
+      if (state.phaseData.trajectoryError > 0 && state.resources[ResourceType.Propulsion] > 0) {
+        actions.push({
+          command: 'ALLOCATE_COURSE_CORRECTION',
+          label: 'Course Correction Burn',
+          description: `Spend fuel to reduce trajectory error (currently ${state.phaseData.trajectoryError.toFixed(1)})`,
+          enabled: true,
+        });
+      }
       actions.push({
         command: 'PROCEED',
         label: 'Continue Transit',
@@ -269,9 +277,9 @@ function getAvailableActions(state: GameState): GameAction[] {
           });
         }
         actions.push({
-          command: 'SELECT_LANDING_SITE',
-          label: 'Select Landing Site',
-          description: 'Choose a landing site and proceed to descent',
+          command: 'PROCEED',
+          label: 'Proceed to Landing Site Selection',
+          description: 'Finish resupply and choose a landing site',
           enabled: true,
         });
       } else {
@@ -523,7 +531,7 @@ export function createEngine(): GameEngine {
             break;
           }
           narrative.push(narr(
-            'All systems checked. Mission Control gives the final GO. The dream of Lunar Colony 3000 begins now.',
+            'All systems checked. Mission Control gives the final GO. The dream of Artemis Trail begins now.',
             'STORY',
             s.turn
           ));
@@ -649,11 +657,19 @@ export function createEngine(): GameEngine {
             }
 
             case Phase.Gateway: {
-              // Bypass gateway - mark as visited and proceed
               if (!s.phaseData.gatewayVisited) {
+                // Bypass gateway entirely
                 s.phaseData.gatewayVisited = true;
+                s.phaseData.gatewayResupplied = true;
                 narrative.push(narr(
                   'Bypassing Gateway Station. No time for resupply — pressing on to landing site selection.',
+                  'STATUS', s.turn
+                ));
+              } else if (!s.phaseData.gatewayResupplied) {
+                // Done resupplying — proceed to landing site selection
+                s.phaseData.gatewayResupplied = true;
+                narrative.push(narr(
+                  'Undocking from Gateway Station. Preparing for landing site selection.',
                   'STATUS', s.turn
                 ));
               }

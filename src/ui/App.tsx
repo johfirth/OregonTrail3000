@@ -18,6 +18,7 @@ export default function App(): React.ReactElement {
     scoreRating,
     startGame,
     executeCommand,
+    executeCommands,
     loadGame,
     hasSavedGame,
     isGameStarted,
@@ -66,6 +67,7 @@ export default function App(): React.ReactElement {
       <MissionPrepScreen
         state={state}
         onCommand={executeCommand}
+        onCommands={executeCommands}
       />
     );
   }
@@ -86,11 +88,11 @@ export default function App(): React.ReactElement {
     );
   }
 
-  // Gateway phase — show landing site selection when appropriate
+  // Gateway phase — show landing site selection after resupply is done
   if (
     state.phase === Phase.Gateway &&
     state.phaseData.gatewayVisited &&
-    actions.some(a => a.command === 'SELECT_LANDING_SITE')
+    state.phaseData.gatewayResupplied
   ) {
     return (
       <LandingSiteScreen

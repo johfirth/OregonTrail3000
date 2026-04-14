@@ -6,7 +6,7 @@ test.describe('Gameplay - Full Game Loop', () => {
   });
 
   test('title screen renders correctly', async ({ page }) => {
-    await expect(page.getByText('LUNAR COLONY 3000')).toBeVisible();
+    await expect(page.getByText('ARTEMIS TRAIL')).toBeVisible();
     await expect(page.getByRole('button', { name: /NEW MISSION/i })).toBeVisible();
   });
 
@@ -58,6 +58,6 @@ test.describe('Gameplay - Phase Transitions', () => {
   test('game progresses through phases', async ({ page }) => {
     await page.goto('/');
     // Start game and verify phase transitions are possible
-    await expect(page.getByText('LUNAR COLONY 3000')).toBeVisible();
+    await expect(page.getByText('ARTEMIS TRAIL')).toBeVisible();
   });
 });

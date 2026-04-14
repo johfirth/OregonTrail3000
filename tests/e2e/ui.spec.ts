@@ -5,12 +5,12 @@ test.describe('UI - Visual Elements', () => {
     await page.goto('/');
     const body = page.locator('body');
     // Check for dark background
-    await expect(body).toHaveCSS('background-color', 'rgb(10, 10, 10)');
+    await expect(body).toHaveCSS('background-color', 'rgb(6, 26, 64)');
   });
 
   test('title screen has all menu options', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('LUNAR COLONY 3000')).toBeVisible();
+    await expect(page.getByText('ARTEMIS TRAIL')).toBeVisible();
     await expect(page.getByRole('button', { name: /NEW MISSION/i })).toBeVisible();
   });
 
