@@ -1,6 +1,7 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect, useState } from 'react';
 import { Phase } from '../engine/types';
 import { useGameEngine } from './hooks/useGameEngine';
+import { useTheme } from './hooks/useTheme';
 import TitleScreen from './screens/TitleScreen';
 import MissionPrepScreen from './screens/MissionPrepScreen';
 import GameScreen from './screens/GameScreen';
@@ -8,6 +9,7 @@ import LandingSiteScreen from './screens/LandingSiteScreen';
 import EventScreen from './screens/EventScreen';
 import VictoryScreen from './screens/VictoryScreen';
 import DefeatScreen from './screens/DefeatScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 export default function App(): React.ReactElement {
   const {
@@ -23,6 +25,9 @@ export default function App(): React.ReactElement {
     hasSavedGame,
     isGameStarted,
   } = useGameEngine();
+
+  const { COLORS } = useTheme();
+  const [showSettings, setShowSettings] = useState(false);
 
   const appRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +61,11 @@ export default function App(): React.ReactElement {
       tabIndex={-1}
       style={{ outline: 'none', minHeight: '100vh' }}
     >
-      {renderScreen()}
+      {showSettings ? (
+        <SettingsScreen onClose={() => setShowSettings(false)} />
+      ) : (
+        renderScreen()
+      )}
     </div>
   );
 
@@ -68,6 +77,7 @@ export default function App(): React.ReactElement {
           onStartGame={startGame}
           onLoadGame={loadGame}
           hasSavedGame={hasSavedGame}
+          onOpenSettings={() => setShowSettings(true)}
         />
       );
     }
@@ -142,6 +152,7 @@ export default function App(): React.ReactElement {
         narrative={narrative}
         actions={actions}
         onCommand={executeCommand}
+        onOpenSettings={() => setShowSettings(true)}
       />
     );
   }

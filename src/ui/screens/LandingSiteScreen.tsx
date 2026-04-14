@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { GameState, GameCommand, LandingSite } from '../../engine/types';
 import { LANDING_SITES } from '../../engine/types';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 
 interface LandingSiteScreenProps {
   state: GameState;
@@ -14,6 +14,7 @@ function StarRating({ value, max = 5 }: { value: number; max?: number }): React.
 }
 
 export default function LandingSiteScreen({ state, onCommand }: LandingSiteScreenProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);

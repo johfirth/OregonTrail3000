@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import type { GameState, GameCommand, GameEvent, EventChoice } from '../../engine/types';
 import { EventSeverity } from '../../engine/types';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 
 interface EventScreenProps {
   state: GameState;
   event: GameEvent;
   onCommand: (command: GameCommand) => void;
 }
-
-const SEVERITY_COLORS: Record<EventSeverity, string> = {
-  [EventSeverity.Minor]: COLORS.text,
-  [EventSeverity.Moderate]: COLORS.highlight,
-  [EventSeverity.Severe]: COLORS.ill,
-  [EventSeverity.Catastrophic]: COLORS.danger,
-  [EventSeverity.Positive]: COLORS.info,
-};
 
 const SEVERITY_LABELS: Record<EventSeverity, string> = {
   [EventSeverity.Minor]: '● MINOR',
@@ -26,8 +18,17 @@ const SEVERITY_LABELS: Record<EventSeverity, string> = {
 };
 
 export default function EventScreen({ state, event, onCommand }: EventScreenProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [focusedIdx, setFocusedIdx] = useState<number>(0);
+
+  const SEVERITY_COLORS: Record<EventSeverity, string> = {
+    [EventSeverity.Minor]: COLORS.text,
+    [EventSeverity.Moderate]: COLORS.highlight,
+    [EventSeverity.Severe]: COLORS.ill,
+    [EventSeverity.Catastrophic]: COLORS.danger,
+    [EventSeverity.Positive]: COLORS.info,
+  };
 
   const choices = event.choices || [];
 

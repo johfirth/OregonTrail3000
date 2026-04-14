@@ -1,19 +1,11 @@
 import React from 'react';
 import type { CrewMember } from '../../engine/types';
 import { HealthStatus, CrewRole } from '../../engine/types';
-import { COLORS, FONTS } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 
 interface CrewPanelProps {
   crew: CrewMember[];
 }
-
-const HEALTH_COLORS: Record<HealthStatus, string> = {
-  [HealthStatus.Healthy]: COLORS.healthy,
-  [HealthStatus.Stressed]: COLORS.stressed,
-  [HealthStatus.Ill]: COLORS.ill,
-  [HealthStatus.Critical]: COLORS.critical,
-  [HealthStatus.Dead]: COLORS.dead,
-};
 
 const ROLE_ICONS: Record<CrewRole, string> = {
   [CrewRole.Commander]: '★',
@@ -22,22 +14,29 @@ const ROLE_ICONS: Record<CrewRole, string> = {
   [CrewRole.Scientist]: '⚗',
 };
 
-function HealthBar({ health, status }: { health: number; status: HealthStatus }): React.ReactElement {
-  const color = HEALTH_COLORS[status];
-  const barWidth = Math.max(0, Math.min(100, health));
-  const segments = 10;
-  const filled = Math.round(barWidth / 10);
-
-  const bar = '█'.repeat(filled) + '░'.repeat(segments - filled);
-
-  return (
-    <span style={{ color, fontFamily: FONTS.mono, fontSize: '12px' }}>
-      [{bar}] {health}%
-    </span>
-  );
-}
-
 export default function CrewPanel({ crew }: CrewPanelProps): React.ReactElement {
+  const { COLORS, FONTS } = useTheme();
+
+  const HEALTH_COLORS: Record<HealthStatus, string> = {
+    [HealthStatus.Healthy]: COLORS.healthy,
+    [HealthStatus.Stressed]: COLORS.stressed,
+    [HealthStatus.Ill]: COLORS.ill,
+    [HealthStatus.Critical]: COLORS.critical,
+    [HealthStatus.Dead]: COLORS.dead,
+  };
+
+  function HealthBar({ health, status }: { health: number; status: HealthStatus }): React.ReactElement {
+    const color = HEALTH_COLORS[status];
+    const barWidth = Math.max(0, Math.min(100, health));
+    const segments = 10;
+    const filled = Math.round(barWidth / 10);
+    const bar = '█'.repeat(filled) + '░'.repeat(segments - filled);
+    return (
+      <span style={{ color, fontFamily: FONTS.mono, fontSize: '12px' }}>
+        [{bar}] {health}%
+      </span>
+    );
+  }
   return (
     <div style={{
       fontFamily: FONTS.mono,

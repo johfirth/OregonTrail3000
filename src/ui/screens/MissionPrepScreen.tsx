@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import type { GameState, GameCommand, Resources } from '../../engine/types';
 import { ResourceType, ConsumptionLevel, RESOURCE_COSTS, DIFFICULTY_MODIFIERS } from '../../engine/types';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 
 interface MissionPrepScreenProps {
   state: GameState;
@@ -21,6 +21,7 @@ interface ResourceAllocation {
 }
 
 export default function MissionPrepScreen({ state, onCommand, onCommands }: MissionPrepScreenProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
   const mods = DIFFICULTY_MODIFIERS[state.difficulty];
   const totalBudget = mods.availableBudget;
 

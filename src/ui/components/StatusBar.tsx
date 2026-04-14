@@ -1,7 +1,7 @@
 import React from 'react';
 import type { GameState } from '../../engine/types';
 import { ResourceType, ConsumptionLevel, Phase } from '../../engine/types';
-import { COLORS, FONTS, getResourceColor } from '../styles';
+import { useTheme, getResourceColor } from '../hooks/useTheme';
 
 interface StatusBarProps {
   state: GameState;
@@ -34,6 +34,7 @@ const RESOURCE_MAXES: Record<string, number> = {
 };
 
 export default function StatusBar({ state }: StatusBarProps): React.ReactElement {
+  const { COLORS, FONTS } = useTheme();
   const aliveCrew = state.crew.filter((c: { isAlive: boolean }) => c.isAlive).length;
   const totalCrew = state.crew.length;
 
@@ -73,7 +74,7 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
         {resources.map(r => (
           <span key={r.key}>
             <span style={{ color: COLORS.textDim }}>{r.label}: </span>
-            <span style={{ color: getResourceColor(r.value, RESOURCE_MAXES[r.key] || 100) }}>
+            <span style={{ color: getResourceColor(r.value, RESOURCE_MAXES[r.key] || 100, COLORS) }}>
               {r.value}
             </span>
           </span>

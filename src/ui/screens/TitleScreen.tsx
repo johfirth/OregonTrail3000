@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import type { GameConfig } from '../../engine/types';
 import { Difficulty } from '../../engine/types';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 import { NARRATIVE } from '../../content/narrative';
 
 interface TitleScreenProps {
   onStartGame: (config: GameConfig) => void;
   onLoadGame: () => boolean;
   hasSavedGame: () => boolean;
+  onOpenSettings: () => void;
 }
 
 const ASCII_TITLE = `
@@ -40,7 +41,8 @@ const DIFFICULTY_DESCRIPTIONS: Record<Difficulty, { label: string; budget: numbe
   },
 };
 
-export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: TitleScreenProps): React.ReactElement {
+export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onOpenSettings }: TitleScreenProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
   const [commanderName, setCommanderName] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Astronaut);
   const [showIntro, setShowIntro] = useState(false);
@@ -263,6 +265,26 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
             📖 MISSION BRIEFING
           </button>
         </div>
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        left: '20px',
+      }}>
+        <button
+          onClick={onOpenSettings}
+          onMouseEnter={() => setHoveredBtn('settings')}
+          onMouseLeave={() => setHoveredBtn(null)}
+          style={{
+            ...BASE_STYLES.button,
+            fontSize: '12px',
+            padding: '6px 12px',
+            ...(hoveredBtn === 'settings' ? BASE_STYLES.buttonHover : {}),
+          }}
+        >
+          ⚙️ Settings
+        </button>
       </div>
 
       <div style={{

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { GameState, ScoreBreakdown, ScoreRating } from '../../engine/types';
 import { VictoryTier, ScoreRating as ScoreRatingEnum } from '../../engine/types';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 import { NARRATIVE } from '../../content/narrative';
 
 interface VictoryScreenProps {
@@ -10,21 +10,6 @@ interface VictoryScreenProps {
   scoreRating: ScoreRating | null;
   onPlayAgain: () => void;
 }
-
-const TIER_BANNERS: Record<VictoryTier, { title: string; color: string }> = {
-  [VictoryTier.ThrivingColony]: {
-    title: '🌟 THRIVING COLONY ESTABLISHED 🌟',
-    color: COLORS.highlight,
-  },
-  [VictoryTier.SustainableOutpost]: {
-    title: '🏗️ SUSTAINABLE OUTPOST ESTABLISHED',
-    color: COLORS.info,
-  },
-  [VictoryTier.BareSurvival]: {
-    title: '⚠️ BARE SURVIVAL — COLONY MARGINAL',
-    color: COLORS.warning,
-  },
-};
 
 const RATING_LABELS: Record<string, { label: string; description: string }> = {
   [ScoreRatingEnum.S]: { label: 'S', description: 'One Giant Leap' },
@@ -36,6 +21,23 @@ const RATING_LABELS: Record<string, { label: string; description: string }> = {
 };
 
 export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPlayAgain }: VictoryScreenProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+
+  const TIER_BANNERS: Record<VictoryTier, { title: string; color: string }> = {
+    [VictoryTier.ThrivingColony]: {
+      title: '🌟 THRIVING COLONY ESTABLISHED 🌟',
+      color: COLORS.highlight,
+    },
+    [VictoryTier.SustainableOutpost]: {
+      title: '🏗️ SUSTAINABLE OUTPOST ESTABLISHED',
+      color: COLORS.info,
+    },
+    [VictoryTier.BareSurvival]: {
+      title: '⚠️ BARE SURVIVAL — COLONY MARGINAL',
+      color: COLORS.warning,
+    },
+  };
+
   const tier = state.victoryTier || VictoryTier.BareSurvival;
   const banner = TIER_BANNERS[tier];
   const rating = scoreRating ? RATING_LABELS[scoreRating] : null;

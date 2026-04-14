@@ -374,6 +374,47 @@ export interface GameSystem {
   processTurn(state: GameState): GameState;
 }
 
+// --- Game Settings (user preferences, not game state) ---
+export enum ThemeMode {
+  NASA = 'NASA',
+  Retro80s = 'RETRO_80S',
+}
+
+export enum TextSpeed {
+  Slow = 'SLOW',
+  Normal = 'NORMAL',
+  Fast = 'FAST',
+  Instant = 'INSTANT',
+}
+
+export enum FontSize {
+  Small = 'SMALL',
+  Medium = 'MEDIUM',
+  Large = 'LARGE',
+}
+
+export interface GameSettings {
+  theme: ThemeMode;
+  textSpeed: TextSpeed;
+  fontSize: FontSize;
+  soundEnabled: boolean;
+  autoSave: boolean;
+  showKeyboardHints: boolean;
+  showCrewPanel: boolean;
+  narrativeLogLines: number; // max visible lines
+}
+
+export const DEFAULT_SETTINGS: GameSettings = {
+  theme: ThemeMode.NASA,
+  textSpeed: TextSpeed.Normal,
+  fontSize: FontSize.Medium,
+  soundEnabled: true,
+  autoSave: true,
+  showKeyboardHints: true,
+  showCrewPanel: true,
+  narrativeLogLines: 50,
+};
+
 // ============================================================
 // Game Constants — sourced from game-mechanics-mission.md
 // All balance-tunable values externalized here.

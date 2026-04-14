@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { GameState } from '../../engine/types';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 import { NARRATIVE } from '../../content/narrative';
 
 interface DefeatScreenProps {
@@ -11,6 +11,7 @@ interface DefeatScreenProps {
 type DebriefStage = 'intro' | 'q1' | 'a1' | 'q2' | 'a2' | 'q3' | 'a3' | 'signature' | 'done';
 
 export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
   const [stage, setStage] = useState<DebriefStage>('intro');
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);

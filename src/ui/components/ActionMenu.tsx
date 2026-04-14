@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { GameAction, GameCommand } from '../../engine/types';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 
 interface ActionMenuProps {
   actions: GameAction[];
@@ -9,6 +9,7 @@ interface ActionMenuProps {
 }
 
 export default function ActionMenu({ actions, onAction, disabled }: ActionMenuProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   if (actions.length === 0) {

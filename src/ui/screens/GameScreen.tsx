@@ -4,16 +4,20 @@ import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, Re
 import StatusBar from '../components/StatusBar';
 import NarrativeLog from '../components/NarrativeLog';
 import CrewPanel from '../components/CrewPanel';
-import { COLORS, FONTS, BASE_STYLES } from '../styles';
+import { useTheme } from '../hooks/useTheme';
+import { useSettings } from '../hooks/useSettings';
 
 interface GameScreenProps {
   state: GameState;
   narrative: NarrativeEntry[];
   actions: GameAction[];
   onCommand: (command: GameCommand) => void;
+  onOpenSettings: () => void;
 }
 
-export default function GameScreen({ state, narrative, actions, onCommand }: GameScreenProps): React.ReactElement {
+export default function GameScreen({ state, narrative, actions, onCommand, onOpenSettings }: GameScreenProps): React.ReactElement {
+  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { settings } = useSettings();
   const [showCrew, setShowCrew] = useState(true);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [focusedIdx, setFocusedIdx] = useState<number>(0);
@@ -379,22 +383,37 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
               </div>
 
               {/* Keyboard help hint */}
-              <div
-                aria-hidden="true"
-                style={{
-                  color: COLORS.muted,
-                  fontSize: '10px',
-                  textAlign: 'center',
-                  marginTop: '6px',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                [1-9] Select Action  │  ↑↓ Navigate  │  Enter Confirm
-              </div>
+              {settings.showKeyboardHints && (
+                <div
+                  aria-hidden="true"
+                  style={{
+                    color: COLORS.muted,
+                    fontSize: '10px',
+                    textAlign: 'center',
+                    marginTop: '6px',
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  [1-9] Select Action  │  ↑↓ Navigate  │  Enter Confirm
+                </div>
+              )}
 
-              {/* Save button */}
-              {actions.some(a => a.command === 'SAVE_GAME') && (
-                <div style={{ marginTop: '8px', textAlign: 'right' }}>
+              {/* Save & Settings buttons */}
+              <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                <button
+                  onClick={onOpenSettings}
+                  onMouseEnter={() => setHoveredBtn('settings')}
+                  onMouseLeave={() => setHoveredBtn(null)}
+                  style={{
+                    ...BASE_STYLES.button,
+                    fontSize: '10px',
+                    padding: '3px 8px',
+                    ...(hoveredBtn === 'settings' ? BASE_STYLES.buttonHover : {}),
+                  }}
+                >
+                  ⚙️ Settings
+                </button>
+                {actions.some(a => a.command === 'SAVE_GAME') && (
                   <button
                     onClick={handleSave}
                     onMouseEnter={() => setHoveredBtn('save')}
@@ -408,15 +427,15 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                   >
                     💾 SAVE
                   </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )}
         </div>
 
-        {/* Crew Panel (collapsible) */}
+        {/* Crew Panel (collapsible, respects settings) */}
         <div style={{
-          width: showCrew ? '220px' : '30px',
+          width: (showCrew && settings.showCrewPanel) ? '220px' : '30px',
           borderLeft: `1px solid ${COLORS.border}`,
           transition: 'width 0.2s',
           overflow: 'hidden',
@@ -432,9 +451,9 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
               borderWidth: '0 0 1px 0',
             }}
           >
-            {showCrew ? '◄ CREW' : '►'}
+            {showCrew && settings.showCrewPanel ? '◄ CREW' : '►'}
           </button>
-          {showCrew && <CrewPanel crew={state.crew} />}
+          {showCrew && settings.showCrewPanel && <CrewPanel crew={state.crew} />}
         </div>
       </div>
     </div>
