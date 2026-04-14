@@ -1,7 +1,17 @@
-// Content loader — loads and validates JSON game content
-// TODO: Implement content loading with runtime validation
+// ============================================================
+// Lunar Colony 3000 — Content Loader
+// Re-exports all game content and provides phase-based lookups.
+// ============================================================
 
-export function loadContent(): void {
-  // TODO: Load events.json, locations.json, crew.json, narrative.json
-  console.log('Content loading not yet implemented');
+import { Phase, GameEvent } from '../engine/types';
+
+export { EVENTS, TRANSIT_EVENTS, SURFACE_EVENTS, UNIVERSAL_EVENTS } from './events';
+export { DEFAULT_CREW } from './crew';
+export { NARRATIVE } from './narrative';
+
+import { EVENTS } from './events';
+
+/** Return all events valid for the given mission phase. */
+export function getEventsForPhase(phase: Phase): GameEvent[] {
+  return EVENTS.filter(e => e.phases.includes(phase));
 }
