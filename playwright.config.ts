@@ -19,6 +19,7 @@ export default defineConfig({
   projects: [
     {
       name: 'headed',
+      testIgnore: '**/electron-app.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
         headless: false,
@@ -29,9 +30,17 @@ export default defineConfig({
     },
     {
       name: 'headless',
+      testIgnore: '**/electron-app.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
         headless: true,
+      },
+    },
+    {
+      name: 'electron',
+      testMatch: '**/electron-app.spec.ts',
+      use: {
+        baseURL: undefined,
       },
     },
   ],

@@ -37,7 +37,7 @@ test.describe('Gameplay - Full Game Loop', () => {
     await expect(page.getByText('Life Support (Supply Days)')).toBeVisible();
 
     // Find and interact with allocation controls
-    const launchButton = page.getByText(/launch|start mission/i);
+    const launchButton = page.getByRole('button', { name: /launch mission/i });
     // The button should become enabled after valid allocation
     await expect(launchButton).toBeVisible();
   });

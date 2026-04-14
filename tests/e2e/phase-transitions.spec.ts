@@ -41,20 +41,21 @@ async function dismissEventIfPresent(page: Page) {
   }
 }
 
-/** Click a game action button by matching its label text. Handles event interruptions. */
+/** Click a game action button by matching its label text. Handles event interruptions.
+ *  Action buttons in GameScreen use role="option", so we search by HTML element + text. */
 async function clickAction(page: Page, labelPattern: RegExp, maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
     await dismissEventIfPresent(page);
-    const btn = page.getByRole('button', { name: labelPattern });
-    if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await btn.click();
+    const btn = page.locator('button').filter({ hasText: labelPattern });
+    if (await btn.first().isVisible({ timeout: 2000 }).catch(() => false)) {
+      await btn.first().click();
       await page.waitForTimeout(500);
       return;
     }
     await page.waitForTimeout(500);
   }
   // Last attempt without catch
-  await page.getByRole('button', { name: labelPattern }).click();
+  await page.locator('button').filter({ hasText: labelPattern }).first().click();
 }
 
 test.describe('Phase Transitions', () => {
