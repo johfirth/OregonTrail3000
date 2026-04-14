@@ -35,3 +35,6 @@ coverage/
 # Electron
 resources/
 test-results/
+
+playwright-report/
+test-results/
