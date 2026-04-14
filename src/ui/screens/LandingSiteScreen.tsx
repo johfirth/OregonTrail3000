@@ -80,14 +80,14 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
       maxWidth: '1000px',
       margin: '0 auto',
     }}>
-      <h2 style={{
+      <h1 style={{
         ...BASE_STYLES.heading,
         textAlign: 'center',
         marginBottom: '4px',
         fontSize: '18px',
       }}>
         ═══ SELECT LANDING SITE ═══
-      </h2>
+      </h1>
       <p style={{ color: COLORS.muted, textAlign: 'center', marginBottom: '20px', fontSize: '12px' }}>
         Choose your landing site carefully. Each location has different advantages and risks.
       </p>

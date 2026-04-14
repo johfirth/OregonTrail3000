@@ -105,7 +105,7 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
         </div>
 
         {/* Event Name */}
-        <h2 style={{
+        <h1 style={{
           color: severityColor,
           fontFamily: FONTS.display,
           fontSize: '18px',
@@ -114,7 +114,7 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
           letterSpacing: '2px',
         }}>
           ⚠ {event.name}
-        </h2>
+        </h1>
 
         {/* Event Description */}
         <p style={{

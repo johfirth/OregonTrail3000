@@ -47,21 +47,23 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
   ];
 
   return (
-    <div style={{
+    <div role="status" aria-live="polite" style={{
       fontFamily: FONTS.mono,
       fontSize: '12px',
       borderBottom: `1px solid ${COLORS.border}`,
       padding: '8px 12px',
       backgroundColor: COLORS.bgDark,
     }}>
-      <div style={{
+      <h1 style={{
         color: COLORS.textDim,
         textAlign: 'center',
-        marginBottom: '4px',
         letterSpacing: '1px',
+        fontSize: '12px',
+        fontWeight: 'normal',
+        margin: '0 0 4px 0',
       }}>
         ═══ MISSION DAY {state.missionDay} │ PHASE: <span style={{ color: COLORS.highlight }}>{PHASE_LABELS[state.phase]}</span> │ TURN {state.turn}/{state.totalTurns > 0 ? state.totalTurns : '—'} │ CREW: <span style={{ color: aliveCrew === totalCrew ? COLORS.healthy : COLORS.warning }}>{aliveCrew}/{totalCrew}</span> ═══
-      </div>
+      </h1>
       <div style={{
         display: 'flex',
         justifyContent: 'center',

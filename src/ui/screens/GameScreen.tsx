@@ -218,7 +218,7 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
 
           {/* EVA Skill Challenge UI */}
           {isAwaitingEvaResult && (
-            <div style={{
+            <div aria-live="assertive" style={{
               ...BASE_STYLES.panel,
               margin: '0 12px',
               textAlign: 'center',
@@ -266,6 +266,7 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                 onChange={(e) => setFuelInput(e.target.value)}
                 min={0}
                 max={state.resources[ResourceType.Propulsion]}
+                aria-label="Course correction fuel units"
                 style={{ ...BASE_STYLES.input, width: '60px', fontSize: '12px', padding: '4px' }}
               />
               <span style={{ color: COLORS.muted }}>FU (trajectory error: {state.phaseData.trajectoryError.toFixed(1)})</span>
@@ -288,6 +289,7 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                 onChange={(e) => setDescentFuelInput(e.target.value)}
                 min={45}
                 max={80}
+                aria-label="Descent fuel units"
                 style={{ ...BASE_STYLES.input, width: '60px', fontSize: '12px', padding: '4px' }}
               />
               <span style={{ color: COLORS.muted }}>FU (more fuel = better landing)</span>
@@ -316,9 +318,9 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
               borderTop: `1px solid ${COLORS.border}`,
               backgroundColor: COLORS.bgPanel,
             }}>
-              <div style={{ color: COLORS.textDim, marginBottom: '4px', fontSize: '11px' }}>
+              <h2 style={{ color: COLORS.textDim, marginBottom: '4px', fontSize: '11px', margin: 0, fontWeight: 'normal' }}>
                 ─── AVAILABLE ACTIONS ───
-              </div>
+              </h2>
               <div
                 role="listbox"
                 aria-label="Available actions"

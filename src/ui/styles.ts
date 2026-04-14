@@ -6,8 +6,8 @@ export const COLORS = {
   bgPanel: '#0B3D91',     // NASA blue panels
   bgDark: '#040E24',      // Darkest background
   text: '#FFFFFF',         // White primary text
-  textDim: '#B0B8C1',     // Light gray secondary
-  muted: '#6B7280',        // Muted gray
+  textDim: '#D1D5DB',     // Light gray secondary (WCAG AA on bgPanel)
+  muted: '#9CA3AF',        // Muted gray (WCAG AA on bg)
 
   // Accent colors
   accent: '#FC3D21',       // NASA red
@@ -68,7 +68,7 @@ export const BASE_STYLES = {
 
   buttonDisabled: {
     backgroundColor: COLORS.bgDark,
-    color: COLORS.muted,
+    color: '#8B95A5',
     border: `1px solid ${COLORS.border}`,
     fontFamily: FONTS.mono,
     fontSize: '14px',
