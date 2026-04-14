@@ -11,12 +11,11 @@ interface TitleScreenProps {
 }
 
 const ASCII_TITLE = `
- ╦  ╦ ╦╔╗╔╔═╗╦═╗  ╔═╗╔═╗╦  ╔═╗╔╗╔╦ ╦
- ║  ║ ║║║║╠═╣╠╦╝  ║  ║ ║║  ║ ║║║║╚╦╝
- ╩═╝╚═╝╝╚╝╩ ╩╩╚═  ╚═╝╚═╝╩═╝╚═╝╝╚╝ ╩ 
-        ╔═══════════════════╗
-        ║    3   0   0   0  ║
-        ╚═══════════════════╝`;
+ ╔═══════════════════════════════════════╗
+ ║    ★  A R T E M I S   T R A I L  ★   ║
+ ║         ·  ·  ·  🌙  ·  ·  ·         ║
+ ║     E A R T H  →  →  →  M O O N      ║
+ ╚═══════════════════════════════════════╝`;
 
 const DIFFICULTY_DESCRIPTIONS: Record<Difficulty, { label: string; budget: number; description: string }> = {
   [Difficulty.Cadet]: {
@@ -64,6 +63,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
         alignItems: 'center',
         justifyContent: 'center',
         padding: '40px',
+        background: `linear-gradient(180deg, ${COLORS.bgDark} 0%, ${COLORS.bg} 100%)`,
       }}>
         <div style={{
           maxWidth: '700px',
@@ -98,141 +98,155 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
       alignItems: 'center',
       justifyContent: 'center',
       padding: '40px',
+      background: `linear-gradient(180deg, ${COLORS.bgDark} 0%, ${COLORS.bg} 50%, ${COLORS.bgPanel} 100%)`,
     }}>
-      {/* ASCII Title */}
-      <pre style={{
-        color: COLORS.text,
-        fontSize: '16px',
-        lineHeight: '1.2',
+      {/* Mission Patch Border */}
+      <div style={{
+        border: `2px solid ${COLORS.borderLight}`,
+        borderRadius: '12px',
+        padding: '32px 48px',
+        boxShadow: `0 0 30px rgba(11, 61, 145, 0.4), inset 0 0 30px rgba(11, 61, 145, 0.1)`,
         textAlign: 'center',
-        marginBottom: '8px',
-        textShadow: `0 0 10px ${COLORS.text}`,
       }}>
-        {ASCII_TITLE}
-      </pre>
-
-      <p style={{
-        color: COLORS.info,
-        fontSize: '14px',
-        marginBottom: '32px',
-        letterSpacing: '3px',
-        textTransform: 'uppercase',
-      }}>
-        An Oregon Trail Adventure... IN SPACE
-      </p>
-
-      {/* Commander Name */}
-      <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-        <label style={{ color: COLORS.textDim, display: 'block', marginBottom: '8px', fontSize: '12px' }}>
-          ENTER COMMANDER NAME:
-        </label>
-        <input
-          type="text"
-          value={commanderName}
-          onChange={(e) => setCommanderName(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') handleStart(); }}
-          placeholder="Commander..."
-          maxLength={30}
-          style={{
-            ...BASE_STYLES.input,
-            width: '300px',
-            textAlign: 'center',
-            fontSize: '16px',
-          }}
-        />
-      </div>
-
-      {/* Difficulty Selection */}
-      <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-        <label style={{ color: COLORS.textDim, display: 'block', marginBottom: '12px', fontSize: '12px' }}>
-          SELECT DIFFICULTY:
-        </label>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          {Object.entries(DIFFICULTY_DESCRIPTIONS).map(([key, info]) => {
-            const diff = key as Difficulty;
-            const isSelected = difficulty === diff;
-            const isHovered = hoveredBtn === diff;
-            return (
-              <button
-                key={diff}
-                onClick={() => setDifficulty(diff)}
-                onMouseEnter={() => setHoveredBtn(diff)}
-                onMouseLeave={() => setHoveredBtn(null)}
-                style={{
-                  ...BASE_STYLES.button,
-                  backgroundColor: isSelected ? COLORS.text : 'transparent',
-                  color: isSelected ? COLORS.bg : COLORS.text,
-                  borderColor: isSelected ? COLORS.text : COLORS.border,
-                  minWidth: '120px',
-                  ...(isHovered && !isSelected ? { borderColor: COLORS.text } : {}),
-                }}
-              >
-                <div>{info.label}</div>
-                <div style={{
-                  fontSize: '10px',
-                  color: isSelected ? COLORS.bg : COLORS.muted,
-                  marginTop: '2px',
-                }}>
-                  {info.budget} CR
-                </div>
-              </button>
-            );
-          })}
-        </div>
-        <p style={{
-          color: COLORS.muted,
-          fontSize: '11px',
-          marginTop: '8px',
-          maxWidth: '400px',
+        {/* ASCII Title */}
+        <pre style={{
+          color: COLORS.text,
+          fontSize: '16px',
+          lineHeight: '1.2',
+          textAlign: 'center',
+          marginBottom: '8px',
+          textShadow: `0 0 15px rgba(0, 180, 216, 0.5)`,
+          fontFamily: FONTS.mono,
         }}>
-          {DIFFICULTY_DESCRIPTIONS[difficulty].description}
+          {ASCII_TITLE}
+        </pre>
+
+        <p style={{
+          color: COLORS.info,
+          fontSize: '14px',
+          marginBottom: '32px',
+          letterSpacing: '3px',
+          textTransform: 'uppercase',
+          fontFamily: FONTS.display,
+        }}>
+          🚀 The Oregon Trail... TO THE MOON 🌙
         </p>
-      </div>
 
-      {/* Action Buttons */}
-      <div style={{ display: 'flex', gap: '12px', flexDirection: 'column', alignItems: 'center' }}>
-        <button
-          onClick={handleStart}
-          disabled={!commanderName.trim()}
-          onMouseEnter={() => setHoveredBtn('start')}
-          onMouseLeave={() => setHoveredBtn(null)}
-          style={{
-            ...(commanderName.trim() ? BASE_STYLES.button : BASE_STYLES.buttonDisabled),
-            fontSize: '16px',
-            padding: '12px 32px',
-            letterSpacing: '2px',
-            ...(hoveredBtn === 'start' && commanderName.trim() ? BASE_STYLES.buttonHover : {}),
-          }}
-        >
-          🚀 NEW MISSION
-        </button>
+        {/* Commander Name */}
+        <div style={{ marginBottom: '24px', textAlign: 'center' }}>
+          <label style={{ color: COLORS.textDim, display: 'block', marginBottom: '8px', fontSize: '12px', letterSpacing: '2px' }}>
+            ENTER COMMANDER NAME:
+          </label>
+          <input
+            type="text"
+            value={commanderName}
+            onChange={(e) => setCommanderName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleStart(); }}
+            placeholder="Commander..."
+            maxLength={30}
+            style={{
+              ...BASE_STYLES.input,
+              width: '300px',
+              textAlign: 'center',
+              fontSize: '16px',
+              borderColor: COLORS.borderLight,
+            }}
+          />
+        </div>
 
-        {hasSavedGame() && (
+        {/* Difficulty Selection */}
+        <div style={{ marginBottom: '24px', textAlign: 'center' }}>
+          <label style={{ color: COLORS.textDim, display: 'block', marginBottom: '12px', fontSize: '12px', letterSpacing: '2px' }}>
+            SELECT DIFFICULTY:
+          </label>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {Object.entries(DIFFICULTY_DESCRIPTIONS).map(([key, info]) => {
+              const diff = key as Difficulty;
+              const isSelected = difficulty === diff;
+              const isHovered = hoveredBtn === diff;
+              return (
+                <button
+                  key={diff}
+                  onClick={() => setDifficulty(diff)}
+                  onMouseEnter={() => setHoveredBtn(diff)}
+                  onMouseLeave={() => setHoveredBtn(null)}
+                  style={{
+                    ...BASE_STYLES.button,
+                    backgroundColor: isSelected ? COLORS.highlight : COLORS.buttonBg,
+                    color: isSelected ? COLORS.bgDark : COLORS.text,
+                    borderColor: isSelected ? COLORS.highlight : COLORS.border,
+                    minWidth: '120px',
+                    ...(isHovered && !isSelected ? { borderColor: COLORS.info, backgroundColor: COLORS.buttonHover } : {}),
+                  }}
+                >
+                  <div>{info.label}</div>
+                  <div style={{
+                    fontSize: '10px',
+                    color: isSelected ? COLORS.bgDark : COLORS.textDim,
+                    marginTop: '2px',
+                  }}>
+                    {info.budget} CR
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <p style={{
+            color: COLORS.textDim,
+            fontSize: '11px',
+            marginTop: '8px',
+            maxWidth: '400px',
+          }}>
+            {DIFFICULTY_DESCRIPTIONS[difficulty].description}
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '12px', flexDirection: 'column', alignItems: 'center' }}>
           <button
-            onClick={onLoadGame}
-            onMouseEnter={() => setHoveredBtn('load')}
+            onClick={handleStart}
+            disabled={!commanderName.trim()}
+            onMouseEnter={() => setHoveredBtn('start')}
+            onMouseLeave={() => setHoveredBtn(null)}
+            style={{
+              ...(commanderName.trim() ? BASE_STYLES.buttonDanger : BASE_STYLES.buttonDisabled),
+              fontSize: '16px',
+              padding: '12px 32px',
+              letterSpacing: '2px',
+              fontFamily: FONTS.display,
+              ...(hoveredBtn === 'start' && commanderName.trim() ? { backgroundColor: '#E0351D' } : {}),
+            }}
+          >
+            🚀 NEW MISSION
+          </button>
+
+          {hasSavedGame() && (
+            <button
+              onClick={onLoadGame}
+              onMouseEnter={() => setHoveredBtn('load')}
+              onMouseLeave={() => setHoveredBtn(null)}
+              style={{
+                ...BASE_STYLES.button,
+                ...(hoveredBtn === 'load' ? BASE_STYLES.buttonHover : {}),
+              }}
+            >
+              📂 LOAD SAVED GAME
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowIntro(true)}
+            onMouseEnter={() => setHoveredBtn('intro')}
             onMouseLeave={() => setHoveredBtn(null)}
             style={{
               ...BASE_STYLES.button,
-              ...(hoveredBtn === 'load' ? BASE_STYLES.buttonHover : {}),
+              fontSize: '12px',
+              ...(hoveredBtn === 'intro' ? BASE_STYLES.buttonHover : {}),
             }}
           >
-            📂 LOAD SAVED GAME
+            📖 MISSION BRIEFING
           </button>
-        )}
-
-        <button
-          onClick={() => setShowIntro(true)}
-          onMouseEnter={() => setHoveredBtn('intro')}
-          onMouseLeave={() => setHoveredBtn(null)}
-          style={{
-            ...BASE_STYLES.button,
-            fontSize: '12px',
-            ...(hoveredBtn === 'intro' ? BASE_STYLES.buttonHover : {}),
-          }}
-        >
-          📖 MISSION BRIEFING
-        </button>
+        </div>
       </div>
 
       <div style={{
@@ -242,7 +256,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame }: T
         fontSize: '10px',
         textAlign: 'center',
       }}>
-        Lunar Colony 3000 © 2028 NASA (not really) • v1.0
+        Artemis Trail © 2028 NASA (not really) • v1.0
       </div>
     </div>
   );

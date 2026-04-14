@@ -8,10 +8,10 @@ interface CrewPanelProps {
 }
 
 const HEALTH_COLORS: Record<HealthStatus, string> = {
-  [HealthStatus.Healthy]: COLORS.success,
-  [HealthStatus.Stressed]: COLORS.warning,
-  [HealthStatus.Ill]: COLORS.accent,
-  [HealthStatus.Critical]: COLORS.danger,
+  [HealthStatus.Healthy]: COLORS.healthy,
+  [HealthStatus.Stressed]: COLORS.stressed,
+  [HealthStatus.Ill]: COLORS.ill,
+  [HealthStatus.Critical]: COLORS.critical,
   [HealthStatus.Dead]: COLORS.dead,
 };
 
@@ -45,8 +45,9 @@ export default function CrewPanel({ crew }: CrewPanelProps): React.ReactElement 
       padding: '8px',
       border: `1px solid ${COLORS.border}`,
       backgroundColor: COLORS.bgPanel,
+      borderRadius: '4px',
     }}>
-      <div style={{ color: COLORS.textDim, marginBottom: '6px', fontSize: '11px', textAlign: 'center' }}>
+      <div style={{ color: COLORS.textDim, marginBottom: '6px', fontSize: '11px', textAlign: 'center', letterSpacing: '1px' }}>
         ─── CREW STATUS ───
       </div>
       {crew.map((member) => (
@@ -75,7 +76,7 @@ export default function CrewPanel({ crew }: CrewPanelProps): React.ReactElement 
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{
-              color: COLORS.muted,
+              color: COLORS.info,
               fontSize: '11px',
               textTransform: 'uppercase',
             }}>

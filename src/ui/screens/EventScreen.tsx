@@ -10,11 +10,11 @@ interface EventScreenProps {
 }
 
 const SEVERITY_COLORS: Record<EventSeverity, string> = {
-  [EventSeverity.Minor]: COLORS.info,
-  [EventSeverity.Moderate]: COLORS.warning,
-  [EventSeverity.Severe]: COLORS.accent,
+  [EventSeverity.Minor]: COLORS.text,
+  [EventSeverity.Moderate]: COLORS.highlight,
+  [EventSeverity.Severe]: COLORS.ill,
   [EventSeverity.Catastrophic]: COLORS.danger,
-  [EventSeverity.Positive]: COLORS.success,
+  [EventSeverity.Positive]: COLORS.info,
 };
 
 const SEVERITY_LABELS: Record<EventSeverity, string> = {
@@ -60,11 +60,11 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
         {/* Event Name */}
         <h2 style={{
           color: severityColor,
-          fontFamily: FONTS.mono,
+          fontFamily: FONTS.display,
           fontSize: '18px',
           marginBottom: '16px',
           textTransform: 'uppercase',
-          letterSpacing: '1px',
+          letterSpacing: '2px',
         }}>
           ⚠ {event.name}
         </h2>
@@ -107,13 +107,13 @@ export default function EventScreen({ state, event, onCommand }: EventScreenProp
                       padding: '10px 16px',
                       borderColor: severityColor,
                       ...(isHovered ? {
-                        backgroundColor: severityColor,
-                        color: COLORS.bg,
+                        backgroundColor: COLORS.buttonHover,
+                        color: COLORS.text,
                       } : {}),
                     }}
                   >
                     <span style={{
-                      color: isHovered ? COLORS.bg : COLORS.accent,
+                      color: isHovered ? COLORS.highlight : COLORS.highlight,
                       marginRight: '8px',
                     }}>
                       ({idx + 1})

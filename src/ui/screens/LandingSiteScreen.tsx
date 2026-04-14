@@ -60,9 +60,9 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
                 ...BASE_STYLES.panel,
                 cursor: 'pointer',
                 border: isSelected
-                  ? `2px solid ${COLORS.text}`
+                  ? `2px solid ${COLORS.accent}`
                   : isHovered
-                    ? `1px solid ${COLORS.highlight}`
+                    ? `1px solid ${COLORS.info}`
                     : `1px solid ${COLORS.border}`,
                 padding: isSelected ? '11px' : '12px',
                 display: 'grid',
@@ -72,7 +72,7 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
             >
               <div>
                 <div style={{
-                  color: isSelected ? COLORS.text : COLORS.highlight,
+                  color: isSelected ? COLORS.text : COLORS.info,
                   fontSize: '14px',
                   fontWeight: 'bold',
                   marginBottom: '8px',
@@ -91,26 +91,26 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
               }}>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Sunlight: </span>
-                  <span style={{ color: site.sunlight >= 4 ? COLORS.success : site.sunlight >= 3 ? COLORS.warning : COLORS.danger }}>
+                  <span style={{ color: COLORS.highlight }}>
                     <StarRating value={site.sunlight} />
                   </span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Ice Access: </span>
-                  <span style={{ color: site.iceAccess >= 4 ? COLORS.success : site.iceAccess >= 3 ? COLORS.warning : COLORS.danger }}>
+                  <span style={{ color: COLORS.highlight }}>
                     <StarRating value={site.iceAccess} />
                   </span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Terrain: </span>
-                  <span style={{ color: site.terrainDifficulty <= 2 ? COLORS.success : site.terrainDifficulty <= 3 ? COLORS.warning : COLORS.danger }}>
+                  <span style={{ color: COLORS.highlight }}>
                     <StarRating value={site.terrainDifficulty} />
                   </span>
                   <span style={{ color: COLORS.muted, fontSize: '10px' }}> (lower=safer)</span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Comms: </span>
-                  <span style={{ color: site.communications >= 4 ? COLORS.success : site.communications >= 3 ? COLORS.warning : COLORS.danger }}>
+                  <span style={{ color: COLORS.highlight }}>
                     <StarRating value={site.communications} />
                   </span>
                 </div>

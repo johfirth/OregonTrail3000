@@ -295,13 +295,13 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                         gap: '8px',
                         alignItems: 'baseline',
                         ...(isHovered && isEnabled ? {
-                          backgroundColor: COLORS.text,
-                          color: COLORS.bg,
+                          backgroundColor: COLORS.buttonHover,
+                          color: COLORS.text,
                         } : {}),
                       }}
                     >
                       <span style={{
-                        color: isHovered && isEnabled ? COLORS.bg : COLORS.accent,
+                        color: isHovered && isEnabled ? COLORS.highlight : COLORS.highlight,
                         minWidth: '24px',
                       }}>
                         ({idx + 1})
@@ -311,7 +311,7 @@ export default function GameScreen({ state, narrative, actions, onCommand }: Gam
                       </span>
                       <span style={{
                         fontSize: '11px',
-                        color: isHovered && isEnabled ? COLORS.bg : COLORS.muted,
+                        color: isHovered && isEnabled ? COLORS.textDim : COLORS.muted,
                       }}>
                         {action.description}
                       </span>

@@ -33,7 +33,7 @@ export default function ActionMenu({ actions, onAction, disabled }: ActionMenuPr
       borderTop: `1px solid ${COLORS.border}`,
       backgroundColor: COLORS.bgPanel,
     }}>
-      <div style={{ color: COLORS.textDim, marginBottom: '6px', fontSize: '11px' }}>
+      <div style={{ color: COLORS.textDim, marginBottom: '6px', fontSize: '11px', letterSpacing: '1px' }}>
         ─── AVAILABLE ACTIONS ───
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -61,12 +61,12 @@ export default function ActionMenu({ actions, onAction, disabled }: ActionMenuPr
                 gap: '8px',
                 alignItems: 'baseline',
                 ...(isHovered && isEnabled ? {
-                  backgroundColor: COLORS.text,
-                  color: COLORS.bg,
+                  backgroundColor: COLORS.buttonHover,
+                  color: COLORS.text,
                 } : {}),
               }}
             >
-              <span style={{ color: isHovered && isEnabled ? COLORS.bg : COLORS.accent, minWidth: '24px' }}>
+              <span style={{ color: isHovered && isEnabled ? COLORS.highlight : COLORS.highlight, minWidth: '24px' }}>
                 ({idx + 1})
               </span>
               <span style={{ flex: 1 }}>
@@ -74,7 +74,7 @@ export default function ActionMenu({ actions, onAction, disabled }: ActionMenuPr
               </span>
               <span style={{
                 fontSize: '11px',
-                color: isHovered && isEnabled ? COLORS.bg : COLORS.muted,
+                color: isHovered && isEnabled ? COLORS.textDim : COLORS.muted,
               }}>
                 {action.description}
               </span>

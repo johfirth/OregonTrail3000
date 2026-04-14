@@ -14,7 +14,7 @@ interface VictoryScreenProps {
 const TIER_BANNERS: Record<VictoryTier, { title: string; color: string }> = {
   [VictoryTier.ThrivingColony]: {
     title: '🌟 THRIVING COLONY ESTABLISHED 🌟',
-    color: COLORS.success,
+    color: COLORS.highlight,
   },
   [VictoryTier.SustainableOutpost]: {
     title: '🏗️ SUSTAINABLE OUTPOST ESTABLISHED',
@@ -64,7 +64,7 @@ export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPl
       }}>
         <h1 style={{
           color: banner.color,
-          fontFamily: FONTS.mono,
+          fontFamily: FONTS.display,
           fontSize: '24px',
           letterSpacing: '3px',
           textShadow: `0 0 20px ${banner.color}`,
@@ -145,7 +145,7 @@ export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPl
                   <td style={{
                     padding: '4px 8px',
                     textAlign: 'right',
-                    color: value > 0 ? COLORS.success : COLORS.muted,
+                    color: value > 0 ? COLORS.info : COLORS.muted,
                   }}>
                     {value > 0 ? `+${value}` : value}
                   </td>

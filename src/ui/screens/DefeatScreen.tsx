@@ -58,7 +58,7 @@ export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps):
         {/* Game Over Header */}
         <h1 style={{
           color: COLORS.danger,
-          fontFamily: FONTS.mono,
+          fontFamily: FONTS.display,
           fontSize: '28px',
           letterSpacing: '4px',
           textShadow: `0 0 20px ${COLORS.danger}`,

@@ -6,6 +6,7 @@ import { COLORS, FONTS, BASE_STYLES } from '../styles';
 interface MissionPrepScreenProps {
   state: GameState;
   onCommand: (command: GameCommand) => void;
+  onCommands: (commands: GameCommand[]) => void;
 }
 
 interface ResourceAllocation {
@@ -19,7 +20,7 @@ interface ResourceAllocation {
   units: number;
 }
 
-export default function MissionPrepScreen({ state, onCommand }: MissionPrepScreenProps): React.ReactElement {
+export default function MissionPrepScreen({ state, onCommand, onCommands }: MissionPrepScreenProps): React.ReactElement {
   const mods = DIFFICULTY_MODIFIERS[state.difficulty];
   const totalBudget = mods.availableBudget;
 
@@ -124,19 +125,15 @@ export default function MissionPrepScreen({ state, onCommand }: MissionPrepScree
       resources[a.key] = a.units;
     }
 
-    // Set consumption first
+    // Send all commands atomically to avoid stale state
+    const commands: GameCommand[] = [];
     if (consumption !== state.consumptionLevel) {
-      onCommand({ type: 'SET_CONSUMPTION', level: consumption });
+      commands.push({ type: 'SET_CONSUMPTION', level: consumption });
     }
-
-    // Allocate resources
-    onCommand({ type: 'ALLOCATE_RESOURCES', resources });
-
-    // Start mission
-    setTimeout(() => {
-      onCommand({ type: 'START_MISSION' });
-    }, 100);
-  }, [allocations, consumption, remaining, isOverBudget, hasMinFuel, onCommand, state.consumptionLevel]);
+    commands.push({ type: 'ALLOCATE_RESOURCES', resources });
+    commands.push({ type: 'START_MISSION' });
+    onCommands(commands);
+  }, [allocations, consumption, remaining, isOverBudget, hasMinFuel, onCommands, state.consumptionLevel]);
 
   return (
     <div style={{
@@ -155,7 +152,7 @@ export default function MissionPrepScreen({ state, onCommand }: MissionPrepScree
       }}>
         ═══ MISSION PREPARATION ═══
       </h2>
-      <p style={{ color: COLORS.muted, textAlign: 'center', marginBottom: '20px', fontSize: '12px' }}>
+      <p style={{ color: COLORS.textDim, textAlign: 'center', marginBottom: '20px', fontSize: '12px' }}>
         Allocate your {totalBudget} CR budget across mission resources. Choose wisely — every credit counts.
       </p>
 
@@ -165,9 +162,11 @@ export default function MissionPrepScreen({ state, onCommand }: MissionPrepScree
         textAlign: 'center',
         fontSize: '18px',
         marginBottom: '16px',
+        backgroundColor: COLORS.bgDark,
+        border: `1px solid ${COLORS.borderLight}`,
       }}>
         <span style={{ color: COLORS.textDim }}>BUDGET: </span>
-        <span style={{ color: isOverBudget ? COLORS.danger : remaining < 50 ? COLORS.warning : COLORS.success, fontSize: '24px' }}>
+        <span style={{ color: isOverBudget ? COLORS.danger : remaining < 50 ? COLORS.warning : COLORS.highlight, fontSize: '24px', fontFamily: FONTS.display }}>
           {remaining} CR
         </span>
         <span style={{ color: COLORS.muted }}> / {totalBudget} CR</span>
@@ -264,7 +263,7 @@ export default function MissionPrepScreen({ state, onCommand }: MissionPrepScree
                 </span>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <span style={{ color: COLORS.warning }}>{cost} CR</span>
+                <span style={{ color: COLORS.highlight }}>{cost} CR</span>
               </div>
             </div>
           );
@@ -294,9 +293,9 @@ export default function MissionPrepScreen({ state, onCommand }: MissionPrepScree
                   ...BASE_STYLES.button,
                   flex: 1,
                   fontSize: '11px',
-                  backgroundColor: isSelected ? COLORS.text : 'transparent',
-                  color: isSelected ? COLORS.bg : COLORS.text,
-                  ...(hoveredBtn === `cons-${level}` && !isSelected ? { borderColor: COLORS.text } : {}),
+                  backgroundColor: isSelected ? COLORS.highlight : COLORS.buttonBg,
+                  color: isSelected ? COLORS.bgDark : COLORS.text,
+                  ...(hoveredBtn === `cons-${level}` && !isSelected ? { borderColor: COLORS.info, backgroundColor: COLORS.buttonHover } : {}),
                 }}
               >
                 {labels[level]}
@@ -314,11 +313,13 @@ export default function MissionPrepScreen({ state, onCommand }: MissionPrepScree
           onMouseEnter={() => setHoveredBtn('launch')}
           onMouseLeave={() => setHoveredBtn(null)}
           style={{
-            ...(isOverBudget || !hasMinFuel ? BASE_STYLES.buttonDisabled : BASE_STYLES.button),
+            ...(isOverBudget || !hasMinFuel ? BASE_STYLES.buttonDisabled : BASE_STYLES.buttonDanger),
             fontSize: '18px',
             padding: '12px 48px',
             letterSpacing: '3px',
-            ...(hoveredBtn === 'launch' && !isOverBudget && hasMinFuel ? BASE_STYLES.buttonHover : {}),
+            fontFamily: FONTS.display,
+            fontWeight: 'bold',
+            ...(hoveredBtn === 'launch' && !isOverBudget && hasMinFuel ? { backgroundColor: '#E0351D' } : {}),
           }}
         >
           🚀 LAUNCH MISSION

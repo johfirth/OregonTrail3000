@@ -52,7 +52,7 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
       fontSize: '12px',
       borderBottom: `1px solid ${COLORS.border}`,
       padding: '8px 12px',
-      backgroundColor: COLORS.bgPanel,
+      backgroundColor: COLORS.bgDark,
     }}>
       <div style={{
         color: COLORS.textDim,
@@ -60,7 +60,7 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
         marginBottom: '4px',
         letterSpacing: '1px',
       }}>
-        ═══ MISSION DAY {state.missionDay} │ PHASE: {PHASE_LABELS[state.phase]} │ TURN {state.turn}/{state.totalTurns > 0 ? state.totalTurns : '—'} │ CREW: {aliveCrew}/{totalCrew} ═══
+        ═══ MISSION DAY {state.missionDay} │ PHASE: <span style={{ color: COLORS.highlight }}>{PHASE_LABELS[state.phase]}</span> │ TURN {state.turn}/{state.totalTurns > 0 ? state.totalTurns : '—'} │ CREW: <span style={{ color: aliveCrew === totalCrew ? COLORS.healthy : COLORS.warning }}>{aliveCrew}/{totalCrew}</span> ═══
       </div>
       <div style={{
         display: 'flex',
@@ -69,18 +69,22 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
         flexWrap: 'wrap',
       }}>
         {resources.map(r => (
-          <span key={r.key} style={{
-            color: getResourceColor(r.value, RESOURCE_MAXES[r.key] || 100),
-          }}>
-            {r.label}: {r.value}
+          <span key={r.key}>
+            <span style={{ color: COLORS.textDim }}>{r.label}: </span>
+            <span style={{ color: getResourceColor(r.value, RESOURCE_MAXES[r.key] || 100) }}>
+              {r.value}
+            </span>
           </span>
         ))}
-        <span style={{ color: COLORS.muted }}>│</span>
-        <span style={{ color: state.morale > 50 ? COLORS.success : state.morale > 25 ? COLORS.warning : COLORS.danger }}>
-          MORALE: {state.morale}
+        <span style={{ color: COLORS.border }}>│</span>
+        <span>
+          <span style={{ color: COLORS.textDim }}>MORALE: </span>
+          <span style={{ color: state.morale > 50 ? COLORS.healthy : state.morale > 25 ? COLORS.warning : COLORS.danger }}>
+            {state.morale}
+          </span>
         </span>
-        <span style={{ color: COLORS.muted }}>│</span>
-        <span style={{ color: COLORS.textDim }}>
+        <span style={{ color: COLORS.border }}>│</span>
+        <span style={{ color: COLORS.info }}>
           {CONSUMPTION_LABELS[state.consumptionLevel]}
         </span>
       </div>

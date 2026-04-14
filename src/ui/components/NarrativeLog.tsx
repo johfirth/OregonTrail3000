@@ -21,7 +21,7 @@ export default function NarrativeLog({ entries }: NarrativeLogProps): React.Reac
       fontFamily: FONTS.mono,
       fontSize: '13px',
       lineHeight: '1.7',
-      backgroundColor: COLORS.bg,
+      backgroundColor: COLORS.bgDark,
       borderBottom: `1px solid ${COLORS.border}`,
     }}>
       {entries.length === 0 && (
@@ -43,7 +43,7 @@ export default function NarrativeLog({ entries }: NarrativeLogProps): React.Reac
               : undefined,
           }}
         >
-          <span style={{ color: COLORS.muted, fontSize: '11px', marginRight: '8px' }}>
+          <span style={{ color: COLORS.textDim, fontSize: '11px', marginRight: '8px' }}>
             [{entry.type.slice(0, 3)}]
           </span>
           {entry.text}
