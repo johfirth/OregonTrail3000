@@ -7,7 +7,7 @@ function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
-    title: 'Lunar Colony 3000',
+    title: 'Artemis Trail',
     backgroundColor: '#0a0a0a',
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

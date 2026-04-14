@@ -1,5 +1,5 @@
 // ============================================================
-// Lunar Colony 3000 — Narrative Text
+// Artemis Trail — Narrative Text
 // All milestone narration, endings, death sequences, and warnings.
 // Sourced from game-design/narrative-outline-artemis.md.
 // ============================================================

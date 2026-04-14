@@ -7,6 +7,14 @@ description: >
 tools:
   - name: file-operations
     description: Create and edit TypeScript files in src/systems/
+  - name: terminal
+    description: Run TypeScript compiler, Vitest tests, and build commands
+  - name: code-search
+    description: Search engine types, content schemas, and game design docs
+  - name: git
+    description: Check diffs, stage files, and commit changes
+  - name: npm
+    description: Install packages and run scripts
 ---
 
 # Systems Developer Agent

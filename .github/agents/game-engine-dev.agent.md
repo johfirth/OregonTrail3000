@@ -7,6 +7,14 @@ description: >
 tools:
   - name: file-operations
     description: Create and edit TypeScript files in src/engine/
+  - name: terminal
+    description: Run TypeScript compiler, Vitest tests, and build commands
+  - name: code-search
+    description: Search codebase for type definitions, imports, and usage patterns
+  - name: git
+    description: Check diffs, stage files, and commit changes
+  - name: npm
+    description: Install packages and run scripts
 ---
 
 # Engine Developer Agent

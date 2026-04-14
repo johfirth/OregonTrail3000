@@ -1,5 +1,5 @@
 // ============================================================
-// Lunar Colony 3000 — Default Crew Data
+// Artemis Trail — Default Crew Data
 // The Commander is added dynamically with the player's name.
 // ============================================================
 

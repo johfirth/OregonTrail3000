@@ -6,7 +6,7 @@ test.describe('Edge Cases', () => {
     // Try to start without entering a name
     const newGameBtn = page.getByRole('button', { name: /NEW MISSION/i });
     // Button should be disabled or name field should be required
-    await expect(page.getByText('LUNAR COLONY 3000')).toBeVisible();
+    await expect(page.getByText('ARTEMIS TRAIL')).toBeVisible();
   });
 
   test('page loads without errors', async ({ page }) => {

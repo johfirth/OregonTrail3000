@@ -215,7 +215,7 @@ export function processTurn(state: GameState, rng: Rng): { state: GameState; nar
       s.gameOverReason = 'Life support systems have failed. The crew could not survive.';
       narrative.push({
         id: `narrative-ls-death-${s.turn}`,
-        text: 'MISSION CONTROL: "We\'ve lost telemetry from Lunar Colony 3000." Would you like us to name the crater after your crew?',
+        text: 'MISSION CONTROL: "We\'ve lost telemetry from Artemis Trail." Would you like us to name the crater after your crew?',
         type: 'DEATH',
         timestamp: s.turn,
       });

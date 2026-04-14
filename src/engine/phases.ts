@@ -159,7 +159,7 @@ export function advancePhase(state: GameState): GameState {
     case Phase.Colony:
       narrative.push({
         id: `narrative-phase-colony-${state.turn}`,
-        text: 'Surface operations complete. The foundations of Lunar Colony 3000 stand against the stark lunar horizon. Time for the final assessment.',
+        text: 'Surface operations complete. The foundations of Artemis Trail stand against the stark lunar horizon. Time for the final assessment.',
         type: 'VICTORY',
         timestamp: state.turn,
       });

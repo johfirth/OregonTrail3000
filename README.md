@@ -1,6 +1,6 @@
-# OregonTrail3000
+# Artemis Trail
 
-A modern text-based adventure game framework inspired by the original Oregon Trail (1971/1978). This project uses GitHub Copilot's agentic development infrastructure to collaboratively design and build text-based adventure games.
+An Oregon Trail-style text adventure — humanity's boldest mission to the Moon. This project uses GitHub Copilot's agentic development infrastructure to collaboratively design and build text-based adventure games.
 
 ## Project Structure
 

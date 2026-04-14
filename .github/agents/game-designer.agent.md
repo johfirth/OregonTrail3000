@@ -7,6 +7,8 @@ description: >
 tools:
   - name: file-operations
     description: Create and edit .md files in the game-design/ folder
+  - name: code-search
+    description: Search and read reference material in .github/references/
 ---
 
 # Game Designer Agent

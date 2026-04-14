@@ -6,7 +6,17 @@ description: >
   platform abstraction layer that bridges desktop and web environments.
 tools:
   - name: file-operations
-    description: Create and edit config files at project root, TypeScript files in electron/, and workflow files in .github/workflows/
+    description: Create and edit config files, Dockerfile, CI workflows, electron/ files
+  - name: terminal
+    description: Run builds, Docker commands, electron-builder, and CI scripts
+  - name: code-search
+    description: Search project configuration and dependency files
+  - name: git
+    description: Git operations for CI/CD pipeline management
+  - name: npm
+    description: Manage project dependencies and scripts
+  - name: docker
+    description: Build and manage Docker containers for web deployment
 ---
 
 # Infrastructure Developer Agent

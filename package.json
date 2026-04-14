@@ -1,7 +1,7 @@
 {
-  "name": "lunar-colony-3000",
+  "name": "artemis-trail",
   "version": "0.1.0",
-  "description": "An Oregon Trail-style text adventure set as a NASA Artemis lunar mission",
+  "description": "An Oregon Trail-style text adventure — humanity's boldest mission to the Moon",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
@@ -16,8 +16,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/ electron/",
-    "docker:build": "vite build && docker build -t lunar-colony-3000 .",
-    "docker:run": "docker run -p 8080:80 lunar-colony-3000"
+    "docker:build": "vite build && docker build -t artemis-trail .",
+    "docker:run": "docker run -p 8080:80 artemis-trail"
   },
   "author": "OregonTrail3000 Team",
   "license": "MIT",
@@ -26,6 +26,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@playwright/mcp": "^0.0.70",
     "@playwright/test": "^1.59.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

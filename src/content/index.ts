@@ -1,5 +1,5 @@
 // ============================================================
-// Lunar Colony 3000 — Content Loader
+// Artemis Trail — Content Loader
 // Re-exports all game content and provides phase-based lookups.
 // ============================================================
 

@@ -1,5 +1,5 @@
 // ============================================================
-// Lunar Colony 3000 — Event Data
+// Artemis Trail — Event Data
 // All 24 events from the game design document.
 // ============================================================
 

@@ -1,7 +1,7 @@
 // Web (browser) save manager — uses localStorage
 import type { SaveManager } from './save-manager';
 
-const SAVE_PREFIX = 'lc3k_save_';
+const SAVE_PREFIX = 'artemis_trail_save_';
 
 export class WebSaveManager implements SaveManager {
   async save(key: string, data: string): Promise<boolean> {

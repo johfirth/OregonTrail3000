@@ -6,7 +6,17 @@ description: >
   with a retro space-terminal aesthetic. No Electron-specific APIs allowed.
 tools:
   - name: file-operations
-    description: Create and edit TypeScript/TSX files in src/ui/
+    description: Create and edit React/TypeScript files in src/ui/
+  - name: terminal
+    description: Run TypeScript compiler, Vite dev server, and build commands
+  - name: code-search
+    description: Search engine API, content, and component files
+  - name: playwright
+    description: Test UI in browser via Playwright MCP for visual verification
+  - name: git
+    description: Check diffs, stage files, and commit changes
+  - name: npm
+    description: Install UI packages and run scripts
 ---
 
 # UI Developer Agent

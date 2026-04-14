@@ -6,7 +6,13 @@ description: >
   ensure every data file is type-safe and validated at runtime.
 tools:
   - name: file-operations
-    description: Create and edit TypeScript and JSON files in src/content/
+    description: Create and edit TypeScript/JSON content files in src/content/
+  - name: terminal
+    description: Run TypeScript compiler and validation scripts
+  - name: code-search
+    description: Search game design documents and engine type definitions
+  - name: git
+    description: Check diffs, stage files, and commit changes
 ---
 
 # Content Developer Agent

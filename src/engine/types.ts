@@ -1,5 +1,5 @@
 // ============================================================
-// Lunar Colony 3000 — Engine Type Definitions
+// Artemis Trail — Engine Type Definitions
 // This file defines ALL shared types for the game engine.
 // ZERO DOM or Electron dependencies allowed.
 // ============================================================

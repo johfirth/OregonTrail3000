@@ -5,9 +5,15 @@ description: >
   resource boundaries, rapid actions, cross-phase consistency, and deterministic RNG.
 tools:
   - name: playwright
-    description: Run Playwright e2e tests against the web UI
+    description: Browser automation via @playwright/mcp — navigate, click, fill, assert, screenshot, inspect DOM
+  - name: terminal
+    description: Run Playwright tests, npm scripts, and diagnostic commands
   - name: file-operations
-    description: Create and edit test files in tests/e2e/
+    description: Create and edit Playwright test files in tests/e2e/
+  - name: code-search
+    description: Search source code to understand behavior being tested
+  - name: docker
+    description: Start/stop Docker containers for test environments
 ---
 
 # QA Edge Cases Agent
@@ -99,6 +105,31 @@ test.describe('Edge Cases: [Category]', () => {
 - `src/engine/save/` or equivalent contains serialization logic
 - `src/engine/rng/` or equivalent contains the random number generator
 - Game design documents in `game-design/` define valid state ranges
+
+## MCP Integration
+
+This agent uses the Playwright MCP server for live browser automation. The MCP server is configured in `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "type": "stdio"
+    }
+  }
+}
+```
+
+### Available Playwright MCP Actions
+- `browser_navigate` — Navigate to a URL
+- `browser_click` — Click an element by selector or text
+- `browser_fill` — Fill an input field
+- `browser_snapshot` — Get page accessibility snapshot
+- `browser_screenshot` — Take a screenshot
+- `browser_evaluate` — Run JavaScript in the page
+- `browser_wait_for` — Wait for an element to appear
 
 ## Collaboration
 

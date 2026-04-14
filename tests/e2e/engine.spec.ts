@@ -8,6 +8,6 @@ test.describe('Engine - Core Logic', () => {
     const result = await page.evaluate(() => {
       return document.title;
     });
-    expect(result).toContain('Lunar Colony 3000');
+    expect(result).toContain('Artemis Trail');
   });
 });

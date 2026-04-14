@@ -5,9 +5,15 @@ description: >
   responsive layout, narrative log behavior, resource color-coding, and keyboard interaction.
 tools:
   - name: playwright
-    description: Run Playwright e2e tests against the web UI
+    description: Browser automation via @playwright/mcp — navigate, click, fill, assert, screenshot, inspect DOM
+  - name: terminal
+    description: Run Playwright tests, npm scripts, and diagnostic commands
   - name: file-operations
-    description: Create and edit test files in tests/e2e/
+    description: Create and edit Playwright test files in tests/e2e/
+  - name: code-search
+    description: Search source code to understand behavior being tested
+  - name: docker
+    description: Start/stop Docker containers for test environments
 ---
 
 # QA UI Agent
@@ -108,6 +114,31 @@ test.describe('UI: [ScreenName]', () => {
 - `src/styles/` or component-level styles define the visual design
 - Game design documents in `game-design/` describe the intended look and feel
 - `index.html` is the entry point for the web application
+
+## MCP Integration
+
+This agent uses the Playwright MCP server for live browser automation. The MCP server is configured in `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "type": "stdio"
+    }
+  }
+}
+```
+
+### Available Playwright MCP Actions
+- `browser_navigate` — Navigate to a URL
+- `browser_click` — Click an element by selector or text
+- `browser_fill` — Fill an input field
+- `browser_snapshot` — Get page accessibility snapshot
+- `browser_screenshot` — Take a screenshot
+- `browser_evaluate` — Run JavaScript in the page
+- `browser_wait_for` — Wait for an element to appear
 
 ## Collaboration
 

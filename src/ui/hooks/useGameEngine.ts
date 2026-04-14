@@ -12,17 +12,29 @@ export function useGameEngine() {
   }, [engine]);
 
   const executeCommand = useCallback((command: GameCommand) => {
-    if (!gameResult) return;
-    const result = engine.executeCommand(gameResult.state, command);
-    setGameResult(result);
-  }, [engine, gameResult]);
+    setGameResult(prev => {
+      if (!prev) return prev;
+      return engine.executeCommand(prev.state, command);
+    });
+  }, [engine]);
+
+  const executeCommands = useCallback((commands: GameCommand[]) => {
+    setGameResult(prev => {
+      if (!prev) return prev;
+      let result = prev;
+      for (const cmd of commands) {
+        result = engine.executeCommand(result.state, cmd);
+      }
+      return result;
+    });
+  }, [engine]);
 
   const saveGame = useCallback((): string | null => {
     if (!gameResult) return null;
     const saveData = engine.saveGame(gameResult.state);
     const json = JSON.stringify(saveData);
     try {
-      localStorage.setItem('lunar-colony-save', json);
+      localStorage.setItem('artemis-trail-save', json);
     } catch {
       // ignore storage errors
     }
@@ -31,7 +43,7 @@ export function useGameEngine() {
 
   const loadGame = useCallback((): boolean => {
     try {
-      const json = localStorage.getItem('lunar-colony-save');
+      const json = localStorage.getItem('artemis-trail-save');
       if (!json) return false;
       const saveData = JSON.parse(json);
       const state = engine.loadGame(saveData);
@@ -49,7 +61,7 @@ export function useGameEngine() {
 
   const hasSavedGame = useCallback((): boolean => {
     try {
-      return localStorage.getItem('lunar-colony-save') !== null;
+      return localStorage.getItem('artemis-trail-save') !== null;
     } catch {
       return false;
     }
@@ -64,6 +76,7 @@ export function useGameEngine() {
     scoreRating: gameResult?.scoreRating ?? null,
     startGame,
     executeCommand,
+    executeCommands,
     saveGame,
     loadGame,
     hasSavedGame,
