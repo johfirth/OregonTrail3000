@@ -43,7 +43,7 @@ test.describe('Keyboard Navigation', () => {
     await expect(page.getByText('Press Enter to launch')).toBeVisible();
 
     // Click outside inputs so Enter isn't captured by an <input>
-    await page.locator('h2:has-text("MISSION PREPARATION")').click();
+    await page.locator('h1:has-text("MISSION PREPARATION")').click();
 
     // Press Enter to launch
     await page.keyboard.press('Enter');
