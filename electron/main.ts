@@ -1,14 +1,18 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage } from 'electron';
 import { join } from 'path';
 
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow(): void {
+  // Load icon from resources
+  const iconPath = join(__dirname, '../../resources/icon.svg');
+
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
     title: 'Artemis Trail',
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#061A40',
+    icon: iconPath,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
