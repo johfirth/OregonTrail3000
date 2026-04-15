@@ -1,7 +1,8 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
-import { Phase } from '../engine/types';
+import { Phase, ThemeMode, FontSize } from '../engine/types';
 import { useGameEngine } from './hooks/useGameEngine';
 import { useTheme } from './hooks/useTheme';
+import { useSettings } from './hooks/useSettings';
 import TitleScreen from './screens/TitleScreen';
 import MissionPrepScreen from './screens/MissionPrepScreen';
 import GameScreen from './screens/GameScreen';
@@ -21,6 +22,7 @@ export default function App(): React.ReactElement {
     startGame,
     executeCommand,
     executeCommands,
+    saveGame,
     loadGame,
     hasSavedGame,
     isGameStarted,
@@ -54,6 +56,45 @@ export default function App(): React.ReactElement {
   const handlePlayAgain = useCallback(() => {
     window.location.reload();
   }, []);
+
+  // Listen for Electron native menu actions
+  const { updateSettings } = useSettings();
+  useEffect(() => {
+    const api = (window as any).electronAPI;
+    if (!api?.onMenuAction) return;
+    api.onMenuAction((action: string) => {
+      switch (action) {
+        case 'new-game':
+          window.location.reload();
+          break;
+        case 'save-game':
+          // Trigger save via engine hook (Ctrl+S equivalent)
+          if (isGameStarted) saveGame();
+          break;
+        case 'load-game':
+          loadGame();
+          break;
+        case 'open-settings':
+          setShowSettings(true);
+          break;
+        case 'theme-nasa':
+          updateSettings({ theme: ThemeMode.NASA });
+          break;
+        case 'theme-retro':
+          updateSettings({ theme: ThemeMode.Retro80s });
+          break;
+        case 'font-small':
+          updateSettings({ fontSize: FontSize.Small });
+          break;
+        case 'font-medium':
+          updateSettings({ fontSize: FontSize.Medium });
+          break;
+        case 'font-large':
+          updateSettings({ fontSize: FontSize.Large });
+          break;
+      }
+    });
+  }, [isGameStarted, updateSettings]);
 
   return (
     <div
