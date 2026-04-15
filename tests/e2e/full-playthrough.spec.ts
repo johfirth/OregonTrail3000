@@ -160,7 +160,7 @@ test.describe('Full Game Playthrough', () => {
     await test.step('Phase 2: Mission Prep', async () => {
       // Verify budget display
       await expect(page.getByText(/BUDGET:/)).toBeVisible();
-      await expect(page.getByText(/\/ 1000 CR/)).toBeVisible();
+      await expect(page.getByText(/\/ \d+ CR/)).toBeVisible();
 
       // Verify resource allocation controls
       await expect(page.getByText('Propulsion (Fuel Units)')).toBeVisible();

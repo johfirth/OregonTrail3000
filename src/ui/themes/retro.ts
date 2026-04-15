@@ -11,12 +11,12 @@ export const RETRO_THEME = {
     accent: '#FFFF55',        // Yellow for text highlights only
     success: '#55FF55',
     warning: '#FFFF55',
-    danger: '#FF5555',
+    danger: '#FF6B6B',
     info: '#55FFFF',
     healthy: '#55FF55',
     stressed: '#FFFF55',
-    ill: '#FF5555',
-    critical: '#FF5555',
+    ill: '#FF6B6B',
+    critical: '#FF6B6B',
     dead: '#AAAAAA',
     border: '#FFFFFF',        // White borders (DOS style)
     borderLight: '#AAAAAA',

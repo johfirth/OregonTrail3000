@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { GameState, GameCommand, GameAction, NarrativeEntry } from '../../engine/types';
-import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, ResourceType, CONSUMPTION_RATES, ILLNESS_MODIFIERS, RESOURCE_COSTS, DIFFICULTY_MODIFIERS } from '../../engine/types';
+import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, ResourceType, CONSUMPTION_RATES, ILLNESS_MODIFIERS, RESOURCE_COSTS, DIFFICULTY_MODIFIERS, TRIVIA_TIMEOUT, TYPING_TIMEOUT } from '../../engine/types';
 import StatusBar from '../components/StatusBar';
 import NarrativeLog from '../components/NarrativeLog';
 import CrewPanel from '../components/CrewPanel';
@@ -177,7 +177,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
           setTriviaQuestion(question);
           setUsedTriviaIds(prev => [...prev, question.id]);
           setTriviaStartTime(Date.now());
-          setTriviaTimeLeft(15);
+          setTriviaTimeLeft(TRIVIA_TIMEOUT[state.difficulty]);
           return;
         }
       }
@@ -187,7 +187,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
       setEvaWord(words[Math.floor(Math.random() * words.length)]);
       setEvaInput('');
       setEvaStartTime(Date.now());
-      setEvaTimeLeft(8);
+      setEvaTimeLeft(TYPING_TIMEOUT[state.difficulty]);
       setTimeout(() => evaInputRef.current?.focus(), 100);
     }
   }, [isAwaitingEvaResult]);
@@ -197,7 +197,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
     if (!isAwaitingEvaResult || evaTimeLeft <= 0 || challengeType !== 'TYPING') return;
     const interval = setInterval(() => {
       const elapsed = (Date.now() - evaStartTime) / 1000;
-      const remaining = Math.max(0, 8 - elapsed);
+      const remaining = Math.max(0, TYPING_TIMEOUT[state.difficulty] - elapsed);
       setEvaTimeLeft(remaining);
       if (remaining <= 0) {
         handleEvaResult(EvaOutcome.Aborted);
@@ -211,7 +211,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
     if (challengeType !== 'TRIVIA' || !isAwaitingEvaResult || triviaFeedback) return;
     const interval = setInterval(() => {
       const elapsed = (Date.now() - triviaStartTime) / 1000;
-      const remaining = Math.max(0, 15 - elapsed);
+      const remaining = Math.max(0, TRIVIA_TIMEOUT[state.difficulty] - elapsed);
       setTriviaTimeLeft(remaining);
       if (remaining <= 0) {
         const correctAnswer = triviaQuestion?.options[triviaQuestion.correctIndex] ?? '';
@@ -474,7 +474,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                   fontSize: '16px',
                   fontWeight: 'bold',
                   fontFamily: FONTS.mono,
-                  color: evaTimeLeft > 4 ? COLORS.success : evaTimeLeft > 2 ? COLORS.warning : COLORS.danger,
+                  color: evaTimeLeft > TYPING_TIMEOUT[state.difficulty] * 0.5 ? COLORS.success : evaTimeLeft > TYPING_TIMEOUT[state.difficulty] * 0.25 ? COLORS.warning : COLORS.danger,
                   minWidth: '80px',
                 }}>
                   Time: {evaTimeLeft.toFixed(1)}s
@@ -607,7 +607,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                       fontSize: '16px',
                       fontWeight: 'bold',
                       fontFamily: FONTS.mono,
-                      color: triviaTimeLeft > 8 ? COLORS.success : triviaTimeLeft > 4 ? COLORS.warning : COLORS.danger,
+                      color: triviaTimeLeft > TRIVIA_TIMEOUT[state.difficulty] * 0.5 ? COLORS.success : triviaTimeLeft > TRIVIA_TIMEOUT[state.difficulty] * 0.25 ? COLORS.warning : COLORS.danger,
                     }}>
                       Time: {triviaTimeLeft.toFixed(1)}s
                     </div>

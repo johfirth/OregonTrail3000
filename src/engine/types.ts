@@ -290,6 +290,8 @@ export interface DifficultyModifiers {
   surfaceMaxTurns: number;
   baseIllnessChance: number;          // 0.05 to 0.15
   saveLoadAllowed: boolean;
+  triviaTimerSeconds: number;         // seconds to answer trivia
+  typingTimerSeconds: number;         // seconds for typing challenges
 }
 
 // --- Score Components ---
@@ -551,6 +553,22 @@ export const SCORE_NO_DEATHS_BONUS = 500;
 // Max mission turns before time-limit failure
 export const MAX_MISSION_TURNS = 25;
 
+// Trivia challenge timeout (seconds) — scales by difficulty
+export const TRIVIA_TIMEOUT: Record<Difficulty, number> = {
+  [Difficulty.Cadet]: 30,
+  [Difficulty.Astronaut]: 20,
+  [Difficulty.Commander]: 15,
+  [Difficulty.Ironman]: 10,
+};
+
+// EVA typing challenge timeout (seconds) — scales by difficulty
+export const TYPING_TIMEOUT: Record<Difficulty, number> = {
+  [Difficulty.Cadet]: 12,
+  [Difficulty.Astronaut]: 8,
+  [Difficulty.Commander]: 6,
+  [Difficulty.Ironman]: 5,
+};
+
 // Difficulty presets
 export const DIFFICULTY_MODIFIERS: Record<Difficulty, DifficultyModifiers> = {
   [Difficulty.Cadet]: {
@@ -567,6 +585,8 @@ export const DIFFICULTY_MODIFIERS: Record<Difficulty, DifficultyModifiers> = {
     surfaceMaxTurns: 10,
     baseIllnessChance: 0.15,
     saveLoadAllowed: true,
+    triviaTimerSeconds: 30,
+    typingTimerSeconds: 12,
   },
   [Difficulty.Astronaut]: {
     startingBudget: 820,
@@ -582,6 +602,8 @@ export const DIFFICULTY_MODIFIERS: Record<Difficulty, DifficultyModifiers> = {
     surfaceMaxTurns: 10,
     baseIllnessChance: 0.18,
     saveLoadAllowed: true,
+    triviaTimerSeconds: 20,
+    typingTimerSeconds: 8,
   },
   [Difficulty.Commander]: {
     startingBudget: 825,
@@ -597,6 +619,8 @@ export const DIFFICULTY_MODIFIERS: Record<Difficulty, DifficultyModifiers> = {
     surfaceMaxTurns: 12,
     baseIllnessChance: 0.20,
     saveLoadAllowed: true,
+    triviaTimerSeconds: 15,
+    typingTimerSeconds: 6,
   },
   [Difficulty.Ironman]: {
     startingBudget: 800,
@@ -612,6 +636,8 @@ export const DIFFICULTY_MODIFIERS: Record<Difficulty, DifficultyModifiers> = {
     surfaceMaxTurns: 10,
     baseIllnessChance: 0.25,
     saveLoadAllowed: false,
+    triviaTimerSeconds: 10,
+    typingTimerSeconds: 5,
   },
 };
 

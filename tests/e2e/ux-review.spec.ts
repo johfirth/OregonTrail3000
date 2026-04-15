@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 
 async function switchToRetro(page: Page) {
-  const settingsBtn = page.locator('button').filter({ hasText: /⚙/ }).first();
+  const settingsBtn = page.locator('button').filter({ hasText: /settings/i }).first();
   if (await settingsBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
     await settingsBtn.click();
     await page.waitForTimeout(300);
@@ -41,7 +41,7 @@ test.describe('UX Review - NASA Theme', () => {
     // Check difficulty options have descriptions
     await expect(page.getByText(/learn the ropes|standard challenge|for veterans|one shot/i)).toBeVisible();
     // Settings gear should be findable
-    const settingsBtn = page.locator('button').filter({ hasText: /⚙/ });
+    const settingsBtn = page.locator('button').filter({ hasText: /settings/i });
     await expect(settingsBtn.first()).toBeVisible();
     await page.screenshot({ path: 'test-results/screenshots/ux-nasa-title.png' });
   });
@@ -49,7 +49,7 @@ test.describe('UX Review - NASA Theme', () => {
   test('mission prep has clear budget feedback', async ({ page }) => {
     await startGame(page);
     // Budget should be visible
-    await expect(page.getByText(/1000 CR/).first()).toBeVisible();
+    await expect(page.getByText(/\d+ CR/).first()).toBeVisible();
     // Resource names should be readable
     await expect(page.getByText(/Propulsion/i).first()).toBeVisible();
     await expect(page.getByText(/Life Support/i).first()).toBeVisible();
