@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { GameState, GameCommand, GameAction, NarrativeEntry } from '../../engine/types';
-import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, ResourceType, CONSUMPTION_RATES, ILLNESS_MODIFIERS } from '../../engine/types';
+import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, ResourceType, CONSUMPTION_RATES, ILLNESS_MODIFIERS, RESOURCE_COSTS, DIFFICULTY_MODIFIERS } from '../../engine/types';
 import StatusBar from '../components/StatusBar';
 import NarrativeLog from '../components/NarrativeLog';
 import CrewPanel from '../components/CrewPanel';
@@ -28,6 +28,15 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
   const [fuelInput, setFuelInput] = useState('15');
   const [descentFuelInput, setDescentFuelInput] = useState('60');
   const [showConsumptionMenu, setShowConsumptionMenu] = useState(false);
+  const [showResupplyMenu, setShowResupplyMenu] = useState(false);
+  const [resupplyAmounts, setResupplyAmounts] = useState<Record<string, number>>({});
+
+  // EVA typing challenge state
+  const [evaWord, setEvaWord] = useState('');
+  const [evaInput, setEvaInput] = useState('');
+  const [evaStartTime, setEvaStartTime] = useState(0);
+  const [evaTimeLeft, setEvaTimeLeft] = useState(8);
+  const evaInputRef = useRef<HTMLInputElement>(null);
 
   // Check if we're waiting for an EVA skill result
   const isAwaitingEvaResult = state.currentEvent?.id?.startsWith('eva-pending-') ?? false;
@@ -107,8 +116,8 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
       }
 
       case 'GATEWAY_RESUPPLY':
-        // This is handled specially via LandingSiteScreen; pass a minimal resupply
-        onCommand({ type: 'GATEWAY_RESUPPLY', purchases: {} });
+        setShowResupplyMenu(true);
+        setResupplyAmounts({});
         break;
 
       case 'GATEWAY_MEDICAL': {
@@ -146,6 +155,53 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
   const handleEvaResult = useCallback((outcome: EvaOutcome) => {
     onCommand({ type: 'EVA_SKILL_RESULT', outcome });
   }, [onCommand]);
+
+  // Initialize EVA typing challenge when awaiting result
+  useEffect(() => {
+    if (isAwaitingEvaResult) {
+      const words = ['LAUNCH', 'THRUST', 'BOOST', 'IGNITE', 'ORBIT', 'DOCK', 'ENGAGE'];
+      setEvaWord(words[Math.floor(Math.random() * words.length)]);
+      setEvaInput('');
+      setEvaStartTime(Date.now());
+      setEvaTimeLeft(8);
+      setTimeout(() => evaInputRef.current?.focus(), 100);
+    }
+  }, [isAwaitingEvaResult]);
+
+  // EVA countdown timer
+  useEffect(() => {
+    if (!isAwaitingEvaResult || evaTimeLeft <= 0) return;
+    const interval = setInterval(() => {
+      const elapsed = (Date.now() - evaStartTime) / 1000;
+      const remaining = Math.max(0, 8 - elapsed);
+      setEvaTimeLeft(remaining);
+      if (remaining <= 0) {
+        handleEvaResult(EvaOutcome.Aborted);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [isAwaitingEvaResult, evaStartTime, evaTimeLeft, handleEvaResult]);
+
+  // EVA typing submit handler
+  const handleEvaSubmit = useCallback(() => {
+    const elapsed = (Date.now() - evaStartTime) / 1000;
+    const correct = evaInput.trim().toUpperCase() === evaWord;
+
+    let outcome: EvaOutcome;
+    if (!correct) {
+      outcome = EvaOutcome.Fumble;
+    } else if (elapsed < 2) {
+      outcome = EvaOutcome.Textbook;
+    } else if (elapsed < 4) {
+      outcome = EvaOutcome.Successful;
+    } else if (elapsed < 6) {
+      outcome = EvaOutcome.Difficult;
+    } else {
+      outcome = EvaOutcome.Difficult;
+    }
+
+    handleEvaResult(outcome);
+  }, [evaInput, evaWord, evaStartTime, handleEvaResult]);
 
   const handleSave = useCallback(() => {
     onCommand({ type: 'SAVE_GAME' });
@@ -210,6 +266,67 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
     return () => document.removeEventListener('keydown', handleKey, true);
   }, [showConsumptionMenu, onCommand]);
 
+  // Gateway resupply: buyable resources (excludes Propulsion and Budget)
+  const resupplyResources = useMemo(() => [
+    ResourceType.LifeSupport,
+    ResourceType.SpareParts,
+    ResourceType.Shielding,
+    ResourceType.Medical,
+  ] as const, []);
+
+  const priceMultiplier = useMemo(
+    () => DIFFICULTY_MODIFIERS[state.difficulty].gatewayPriceMultiplier,
+    [state.difficulty]
+  );
+
+  const resupplyTotal = useMemo(() => {
+    let total = 0;
+    for (const rt of resupplyResources) {
+      const qty = resupplyAmounts[rt] || 0;
+      total += qty * Math.ceil(RESOURCE_COSTS[rt].costPerUnit * priceMultiplier);
+    }
+    return total;
+  }, [resupplyAmounts, resupplyResources, priceMultiplier]);
+
+  const budget = state.resources[ResourceType.Budget];
+
+  const updateResupplyAmount = useCallback((rt: ResourceType, delta: number) => {
+    setResupplyAmounts(prev => {
+      const current = prev[rt] || 0;
+      const unitCost = Math.ceil(RESOURCE_COSTS[rt].costPerUnit * priceMultiplier);
+      // Calculate current total excluding this resource
+      let otherTotal = 0;
+      for (const r of resupplyResources) {
+        if (r !== rt) otherTotal += (prev[r] || 0) * Math.ceil(RESOURCE_COSTS[r].costPerUnit * priceMultiplier);
+      }
+      const maxAffordable = Math.floor((budget - otherTotal) / unitCost);
+      const next = Math.max(0, Math.min(current + delta, maxAffordable));
+      return { ...prev, [rt]: next };
+    });
+  }, [priceMultiplier, budget, resupplyResources]);
+
+  const confirmResupply = useCallback(() => {
+    onCommand({ type: 'GATEWAY_RESUPPLY', purchases: resupplyAmounts });
+    setShowResupplyMenu(false);
+    setResupplyAmounts({});
+  }, [onCommand, resupplyAmounts]);
+
+  const cancelResupply = useCallback(() => {
+    setShowResupplyMenu(false);
+    setResupplyAmounts({});
+  }, []);
+
+  // Keyboard handler for resupply sub-menu
+  useEffect(() => {
+    if (!showResupplyMenu) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') { cancelResupply(); e.preventDefault(); e.stopPropagation(); }
+      if (e.key === 'Enter') { confirmResupply(); e.preventDefault(); e.stopPropagation(); }
+    }
+    document.addEventListener('keydown', handleKey, true);
+    return () => document.removeEventListener('keydown', handleKey, true);
+  }, [showResupplyMenu, confirmResupply, cancelResupply]);
+
   return (
     <div style={{
       ...BASE_STYLES.container,
@@ -241,30 +358,78 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
               ...BASE_STYLES.panel,
               margin: '0 12px',
               textAlign: 'center',
+              padding: '16px',
             }}>
-              <div style={{ color: COLORS.info, marginBottom: '8px', fontSize: '13px' }}>
+              <div style={{ color: COLORS.info, marginBottom: '8px', fontSize: '14px', fontWeight: 'bold', letterSpacing: '2px' }}>
                 ─── EVA SKILL CHALLENGE ───
               </div>
               <p style={{ color: COLORS.text, fontSize: '12px', marginBottom: '12px' }}>
-                Select EVA outcome (simulated skill check):
+                Your crew is preparing for EVA. Type the command sequence to execute:
               </p>
-              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                {Object.values(EvaOutcome).map((outcome) => (
-                  <button
-                    key={outcome}
-                    onClick={() => handleEvaResult(outcome)}
-                    onMouseEnter={() => setHoveredBtn(`eva-${outcome}`)}
-                    onMouseLeave={() => setHoveredBtn(null)}
-                    style={{
-                      ...BASE_STYLES.button,
-                      fontSize: '11px',
-                      padding: '6px 12px',
-                      ...(hoveredBtn === `eva-${outcome}` ? BASE_STYLES.buttonHover : {}),
-                    }}
-                  >
-                    {outcome}
-                  </button>
-                ))}
+              <div style={{
+                fontSize: '28px',
+                fontWeight: 'bold',
+                color: COLORS.warning,
+                margin: '12px 0',
+                letterSpacing: '6px',
+                fontFamily: FONTS.mono,
+              }}>
+                &gt;&gt;&gt; {evaWord} &lt;&lt;&lt;
+              </div>
+              <p style={{ color: COLORS.textDim, fontSize: '11px', marginBottom: '12px' }}>
+                Type the word above and press Enter!
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+                <input
+                  ref={evaInputRef}
+                  type="text"
+                  value={evaInput}
+                  onChange={(e) => setEvaInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleEvaSubmit();
+                    }
+                  }}
+                  autoComplete="off"
+                  spellCheck={false}
+                  aria-label="Type the EVA command word"
+                  style={{
+                    ...BASE_STYLES.input,
+                    fontSize: '18px',
+                    padding: '8px 12px',
+                    width: '220px',
+                    textAlign: 'center',
+                    letterSpacing: '3px',
+                    fontFamily: FONTS.mono,
+                    textTransform: 'uppercase',
+                  }}
+                />
+                <div style={{
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  fontFamily: FONTS.mono,
+                  color: evaTimeLeft > 4 ? COLORS.success : evaTimeLeft > 2 ? COLORS.warning : COLORS.danger,
+                  minWidth: '80px',
+                }}>
+                  Time: {evaTimeLeft.toFixed(1)}s
+                </div>
+              </div>
+              <div style={{
+                fontSize: '10px',
+                color: COLORS.textDim,
+                borderTop: `1px solid ${COLORS.border}`,
+                paddingTop: '8px',
+                lineHeight: '1.6',
+                fontFamily: FONTS.mono,
+              }}>
+                <div>Speed determines EVA success:</div>
+                <div>
+                  &lt; 2s = TEXTBOOK │ &lt; 4s = SUCCESSFUL │ &lt; 6s = DIFFICULT
+                </div>
+                <div>
+                  Wrong word = FUMBLE │ No input = ABORTED
+                </div>
               </div>
             </div>
           )}
