@@ -2,7 +2,7 @@
 
 **The Oregon Trail... TO THE MOON** — A text-based adventure game where you command NASA's Artemis VII mission to establish humanity's first lunar colony.
 
-Built entirely using **GitHub Copilot's agentic development** workflow with 10 specialized AI agents.
+Built entirely using **GitHub Copilot's agentic development** workflow with 15 specialized AI agents.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB)](https://react.dev/)
@@ -94,6 +94,28 @@ Artemis Trail reimagines the classic Oregon Trail (1978) as a NASA Artemis lunar
 
 ---
 
+## 📸 Screenshots
+
+### NASA Modern Theme
+<p>
+  <img src="docs/screenshots/nasa-title.png" alt="NASA Theme - Title Screen" width="400" />
+  <img src="docs/screenshots/nasa-mission-prep.png" alt="NASA Theme - Mission Prep" width="400" />
+</p>
+<p>
+  <img src="docs/screenshots/nasa-game.png" alt="NASA Theme - Gameplay" width="400" />
+</p>
+
+### Retro 80s Theme
+<p>
+  <img src="docs/screenshots/retro-title.png" alt="Retro Theme - Title Screen" width="400" />
+  <img src="docs/screenshots/retro-mission-prep.png" alt="Retro Theme - Mission Prep" width="400" />
+</p>
+<p>
+  <img src="docs/screenshots/retro-game.png" alt="Retro Theme - Gameplay" width="400" />
+</p>
+
+---
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
@@ -111,7 +133,7 @@ Artemis Trail reimagines the classic Oregon Trail (1978) as a NASA Artemis lunar
 
 ## 🤖 Built with Agentic Development
 
-This entire project was designed and built using **GitHub Copilot's agentic development** workflow. 14 specialized AI agents collaborate through the `.github/agents/` directory, each with defined ownership boundaries, tools, and expertise.
+This entire project was designed and built using **GitHub Copilot's agentic development** workflow. 15 specialized AI agents collaborate through the `.github/agents/` directory, each with defined ownership boundaries, tools, and expertise.
 
 ### Agent Roster
 
@@ -131,6 +153,7 @@ This entire project was designed and built using **GitHub Copilot's agentic deve
 | ♿ **QA: Accessibility** | WCAG 2.1 compliance | `tests/e2e/accessibility*` | playwright, axe-core, terminal, docker |
 | 🔒 **QA: Security** | Vulnerability testing | `tests/e2e/security*` | playwright, terminal, code-search, docker |
 | 📋 **PR Reviewer** | Code review & approval | Pull requests | code-search, terminal, git |
+| 🎯 **QA: UX** | UX review & theming | `tests/e2e/ux*` | playwright, terminal, docker |
 
 ### Agent Collaboration Model
 - **Game Designer** writes `.md` design documents in `game-design/` — never writes code
@@ -153,7 +176,7 @@ This entire project was designed and built using **GitHub Copilot's agentic deve
 
 ```
 .github/
-├── agents/              # 14 specialized AI agent definitions
+├── agents/              # 15 specialized AI agent definitions
 │   ├── game-designer.agent.md
 │   ├── game-engine-dev.agent.md
 │   ├── game-systems-dev.agent.md
@@ -167,7 +190,8 @@ This entire project was designed and built using **GitHub Copilot's agentic deve
 │   ├── qa-edge-cases.agent.md
 │   ├── qa-accessibility.agent.md
 │   ├── qa-security.agent.md
-│   └── qa-pr-reviewer.agent.md
+│   ├── qa-pr-reviewer.agent.md
+│   └── qa-ux.agent.md
 ├── instructions/        # Scoped Copilot instructions
 ├── references/          # Oregon Trail source + design patterns
 └── copilot-instructions.md  # Repo-wide agent rules
@@ -239,8 +263,8 @@ npm test
 
 ### Test Coverage
 - **187 unit tests** (Vitest) covering engine, systems, and content
-- **49 E2E tests** (Playwright) covering gameplay, accessibility, keyboard, security, and UI
-- **Total: 236 tests** across unit and E2E suites
+- **138 E2E tests** (Playwright) covering gameplay, accessibility, keyboard, security, retro theme, and UX
+- **Total: 325 tests** across unit and E2E suites
 - **Headed mode** with `slowMo: 300ms` so you can watch the game being played
 - **Video recording** and screenshots captured for every test run
 - **Traces** available for debugging: `npx playwright show-trace test-results/*/trace.zip`
@@ -249,11 +273,14 @@ npm test
 | Suite | Tests | Focus |
 |-------|-------|-------|
 | Unit (Vitest) | 187 | Engine, systems, content validation |
-| E2E: Gameplay | 16 | Full playthroughs, phase transitions |
+| E2E: Gameplay | 10 | Full playthroughs, phase transitions, defeat paths |
 | E2E: Accessibility | 10 | WCAG 2.1, axe-core, color contrast |
-| E2E: Keyboard | 10 | Number keys, arrows, Enter, Escape |
+| E2E: Keyboard | 11 | Number keys, arrows, Enter, Escape, wrapping |
 | E2E: Security | 7 | XSS, injection, localStorage, CSP |
-| E2E: Other | 6 | UI rendering, navigation, edge cases |
+| E2E: Retro Theme | 6 | Visual authenticity, a11y in retro mode |
+| E2E: UX Review | 8 | Menu clarity, budget feedback, theme UX |
+| E2E: UI & Other | 14 | Rendering, navigation, interactions, edge cases |
+| E2E: Electron | 6 | Desktop app window, shortcuts, navigation |
 
 ---
 
