@@ -2,6 +2,7 @@ import React from 'react';
 import type { GameState } from '../../engine/types';
 import { ResourceType, ConsumptionLevel, Phase } from '../../engine/types';
 import { useTheme, getResourceColor } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 
 interface StatusBarProps {
   state: GameState;
@@ -35,16 +36,17 @@ const RESOURCE_MAXES: Record<string, number> = {
 
 export default function StatusBar({ state }: StatusBarProps): React.ReactElement {
   const { COLORS, FONTS } = useTheme();
+  const icons = useIcons();
   const aliveCrew = state.crew.filter((c: { isAlive: boolean }) => c.isAlive).length;
   const totalCrew = state.crew.length;
 
   const resources = [
-    { label: 'FU', tooltip: 'Fuel Units (Propulsion)', value: state.resources[ResourceType.Propulsion], key: ResourceType.Propulsion },
-    { label: 'SD', tooltip: 'Supply Days (Life Support)', value: Math.round(state.resources[ResourceType.LifeSupport] * 10) / 10, key: ResourceType.LifeSupport },
-    { label: 'PU', tooltip: 'Part Units (Spare Parts)', value: state.resources[ResourceType.SpareParts], key: ResourceType.SpareParts },
-    { label: 'SR', tooltip: 'Shield Rating (Radiation Shielding)', value: state.resources[ResourceType.Shielding], key: ResourceType.Shielding },
-    { label: 'MU', tooltip: 'Med Units (Medical Supplies)', value: state.resources[ResourceType.Medical], key: ResourceType.Medical },
-    { label: 'CR', tooltip: 'Credits (Mission Budget)', value: state.resources[ResourceType.Budget], key: ResourceType.Budget },
+    { label: 'FU', icon: icons.fuel, tooltip: 'Fuel Units (Propulsion)', value: state.resources[ResourceType.Propulsion], key: ResourceType.Propulsion },
+    { label: 'SD', icon: icons.food, tooltip: 'Supply Days (Life Support)', value: Math.round(state.resources[ResourceType.LifeSupport] * 10) / 10, key: ResourceType.LifeSupport },
+    { label: 'PU', icon: icons.parts, tooltip: 'Part Units (Spare Parts)', value: state.resources[ResourceType.SpareParts], key: ResourceType.SpareParts },
+    { label: 'SR', icon: icons.shield, tooltip: 'Shield Rating (Radiation Shielding)', value: state.resources[ResourceType.Shielding], key: ResourceType.Shielding },
+    { label: 'MU', icon: icons.medical, tooltip: 'Med Units (Medical Supplies)', value: state.resources[ResourceType.Medical], key: ResourceType.Medical },
+    { label: 'CR', icon: icons.budget, tooltip: 'Credits (Mission Budget)', value: state.resources[ResourceType.Budget], key: ResourceType.Budget },
   ];
 
   return (
@@ -63,7 +65,7 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
         fontWeight: 'normal',
         margin: '0 0 4px 0',
       }}>
-        ═══ MISSION DAY {state.missionDay} │ PHASE: <span style={{ color: COLORS.highlight }}>{PHASE_LABELS[state.phase]}</span> │ TURN {state.turn}/{state.totalTurns > 0 ? state.totalTurns : '—'} │ CREW: <span style={{ color: aliveCrew === totalCrew ? COLORS.healthy : COLORS.warning }}>{aliveCrew}/{totalCrew}</span> ═══
+        ═══ MISSION DAY {state.missionDay} │ PHASE: <span style={{ color: COLORS.highlight }}>{PHASE_LABELS[state.phase]}</span> │ TURN {state.turn}/{state.totalTurns > 0 ? state.totalTurns : '—'} │ <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{icons.crewGroup} CREW: <span style={{ color: aliveCrew === totalCrew ? COLORS.healthy : COLORS.warning }}>{aliveCrew}/{totalCrew}</span></span> ═══
       </h1>
       <div style={{
         display: 'flex',
@@ -72,7 +74,8 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
         flexWrap: 'wrap',
       }}>
         {resources.map(r => (
-          <span key={r.key} title={r.tooltip}>
+          <span key={r.key} title={r.tooltip} style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+            {r.icon && <span style={{ display: 'inline-flex', color: COLORS.textDim }}>{r.icon}</span>}
             <span style={{ color: COLORS.textDim }}>{r.label}: </span>
             <span style={{ color: getResourceColor(r.value, RESOURCE_MAXES[r.key] || 100, COLORS) }}>
               {r.value}

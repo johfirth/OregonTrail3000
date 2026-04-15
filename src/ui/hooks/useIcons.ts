@@ -16,6 +16,13 @@ import {
   DocumentRegular,
   StarRegular,
   StarFilled,
+  FoodAppleRegular,
+  WrenchRegular,
+  ShieldCheckmarkRegular,
+  AddCircleRegular,
+  MoneyRegular,
+  GaugeRegular,
+  PeopleRegular,
 } from '@fluentui/react-icons';
 
 export function useIcons() {
@@ -34,5 +41,14 @@ export function useIcons() {
     health: isRetro ? '[+]' : React.createElement(HeartRegular, { fontSize: 14 }),
     play: isRetro ? '[PLAY]' : React.createElement(PlayRegular, { fontSize: 16 }),
     doc: isRetro ? '[DOC]' : React.createElement(DocumentRegular, { fontSize: 16 }),
+    // Resource icons for StatusBar
+    fuel: isRetro ? '' : React.createElement(RocketRegular, { fontSize: 13 }),
+    food: isRetro ? '' : React.createElement(FoodAppleRegular, { fontSize: 13 }),
+    parts: isRetro ? '' : React.createElement(WrenchRegular, { fontSize: 13 }),
+    shield: isRetro ? '' : React.createElement(ShieldCheckmarkRegular, { fontSize: 13 }),
+    medical: isRetro ? '' : React.createElement(AddCircleRegular, { fontSize: 13 }),
+    budget: isRetro ? '' : React.createElement(MoneyRegular, { fontSize: 13 }),
+    morale: isRetro ? '' : React.createElement(GaugeRegular, { fontSize: 13 }),
+    crewGroup: isRetro ? '' : React.createElement(PeopleRegular, { fontSize: 13 }),
   };
 }
