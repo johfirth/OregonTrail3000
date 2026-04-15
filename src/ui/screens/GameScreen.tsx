@@ -572,6 +572,107 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                     </button>
                   </div>
                 </>
+              ) : showResupplyMenu ? (
+                <>
+                  <h2 style={{ color: COLORS.info, marginBottom: '6px', fontSize: '11px', margin: 0, fontWeight: 'normal' }}>
+                    ─── GATEWAY RESUPPLY ───
+                  </h2>
+                  <div style={{ color: COLORS.textDim, fontSize: '11px', marginBottom: '8px', marginTop: '4px' }}>
+                    Budget: {budget} CR │ Prices marked up {priceMultiplier}×
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    {resupplyResources.map((rt) => {
+                      const info = RESOURCE_COSTS[rt];
+                      const unitCost = Math.ceil(info.costPerUnit * priceMultiplier);
+                      const qty = resupplyAmounts[rt] || 0;
+                      const lineCost = qty * unitCost;
+                      return (
+                        <div
+                          key={rt}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '4px 10px',
+                            fontSize: '12px',
+                            fontFamily: FONTS.mono,
+                            color: COLORS.text,
+                          }}
+                        >
+                          <span style={{ minWidth: '160px' }}>{info.unitLabel}</span>
+                          <span style={{ color: COLORS.textDim, minWidth: '100px' }}>Price: {unitCost} CR/unit</span>
+                          <button
+                            onClick={() => updateResupplyAmount(rt, -1)}
+                            onMouseEnter={() => setHoveredBtn(`resupply-minus-${rt}`)}
+                            onMouseLeave={() => setHoveredBtn(null)}
+                            disabled={qty <= 0}
+                            style={{
+                              ...(qty > 0 ? BASE_STYLES.button : BASE_STYLES.buttonDisabled),
+                              padding: '2px 8px',
+                              fontSize: '12px',
+                              ...(hoveredBtn === `resupply-minus-${rt}` && qty > 0 ? BASE_STYLES.buttonHover : {}),
+                            }}
+                          >
+                            −
+                          </button>
+                          <span style={{ minWidth: '40px', textAlign: 'center', color: COLORS.highlight }}>{qty}</span>
+                          <button
+                            onClick={() => updateResupplyAmount(rt, 1)}
+                            onMouseEnter={() => setHoveredBtn(`resupply-plus-${rt}`)}
+                            onMouseLeave={() => setHoveredBtn(null)}
+                            disabled={resupplyTotal + unitCost > budget}
+                            style={{
+                              ...(resupplyTotal + unitCost <= budget ? BASE_STYLES.button : BASE_STYLES.buttonDisabled),
+                              padding: '2px 8px',
+                              fontSize: '12px',
+                              ...(hoveredBtn === `resupply-plus-${rt}` && resupplyTotal + unitCost <= budget ? BASE_STYLES.buttonHover : {}),
+                            }}
+                          >
+                            +
+                          </button>
+                          <span style={{ color: COLORS.muted, minWidth: '70px', textAlign: 'right' }}>= {lineCost} CR</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={{ color: COLORS.textDim, fontSize: '11px', marginTop: '8px', padding: '0 10px', fontFamily: FONTS.mono }}>
+                    Total: {resupplyTotal} CR │ Remaining: {budget - resupplyTotal} CR
+                  </div>
+                  <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ color: COLORS.muted, fontSize: '10px', letterSpacing: '0.5px' }}>
+                      +/− to adjust, Enter to confirm, Escape to cancel
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        onClick={cancelResupply}
+                        onMouseEnter={() => setHoveredBtn('cancel-resupply')}
+                        onMouseLeave={() => setHoveredBtn(null)}
+                        style={{
+                          ...BASE_STYLES.button,
+                          fontSize: '10px',
+                          padding: '3px 8px',
+                          ...(hoveredBtn === 'cancel-resupply' ? BASE_STYLES.buttonHover : {}),
+                        }}
+                      >
+                        ← CANCEL
+                      </button>
+                      <button
+                        onClick={confirmResupply}
+                        onMouseEnter={() => setHoveredBtn('confirm-resupply')}
+                        onMouseLeave={() => setHoveredBtn(null)}
+                        style={{
+                          ...BASE_STYLES.button,
+                          fontSize: '10px',
+                          padding: '3px 8px',
+                          fontWeight: 'bold',
+                          ...(hoveredBtn === 'confirm-resupply' ? BASE_STYLES.buttonHover : {}),
+                        }}
+                      >
+                        CONFIRM PURCHASE
+                      </button>
+                    </div>
+                  </div>
+                </>
               ) : (
               <>
               <h2 style={{ color: COLORS.textDim, marginBottom: '4px', fontSize: '11px', margin: 0, fontWeight: 'normal' }}>
