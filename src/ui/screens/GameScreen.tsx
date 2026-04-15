@@ -8,6 +8,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useSettings } from '../hooks/useSettings';
 import { useIcons } from '../hooks/useIcons';
 import { ASCII_ART } from '../ascii-art';
+import { getRandomTrivia, type TriviaQuestion } from '../../content/trivia';
 
 interface GameScreenProps {
   state: GameState;
@@ -37,6 +38,14 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
   const [evaStartTime, setEvaStartTime] = useState(0);
   const [evaTimeLeft, setEvaTimeLeft] = useState(8);
   const evaInputRef = useRef<HTMLInputElement>(null);
+
+  // EVA challenge type (typing vs trivia)
+  const [challengeType, setChallengeType] = useState<'TYPING' | 'TRIVIA'>('TYPING');
+  const [triviaQuestion, setTriviaQuestion] = useState<TriviaQuestion | null>(null);
+  const [usedTriviaIds, setUsedTriviaIds] = useState<string[]>([]);
+  const [triviaTimeLeft, setTriviaTimeLeft] = useState(15);
+  const [triviaStartTime, setTriviaStartTime] = useState(0);
+  const [triviaFeedback, setTriviaFeedback] = useState<{ type: 'correct' | 'wrong' | 'timeout'; correctAnswer?: string } | null>(null);
 
   // Check if we're waiting for an EVA skill result
   const isAwaitingEvaResult = state.currentEvent?.id?.startsWith('eva-pending-') ?? false;
@@ -156,9 +165,24 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
     onCommand({ type: 'EVA_SKILL_RESULT', outcome });
   }, [onCommand]);
 
-  // Initialize EVA typing challenge when awaiting result
+  // Initialize EVA challenge (typing or trivia) when awaiting result
   useEffect(() => {
     if (isAwaitingEvaResult) {
+      setTriviaFeedback(null);
+      const isTrivia = Math.random() < 0.5;
+      if (isTrivia) {
+        const question = getRandomTrivia(usedTriviaIds);
+        if (question) {
+          setChallengeType('TRIVIA');
+          setTriviaQuestion(question);
+          setUsedTriviaIds(prev => [...prev, question.id]);
+          setTriviaStartTime(Date.now());
+          setTriviaTimeLeft(15);
+          return;
+        }
+      }
+      // Typing challenge (default or trivia fallback)
+      setChallengeType('TYPING');
       const words = ['LAUNCH', 'THRUST', 'BOOST', 'IGNITE', 'ORBIT', 'DOCK', 'ENGAGE'];
       setEvaWord(words[Math.floor(Math.random() * words.length)]);
       setEvaInput('');
@@ -168,9 +192,9 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
     }
   }, [isAwaitingEvaResult]);
 
-  // EVA countdown timer
+  // EVA countdown timer (typing challenge only)
   useEffect(() => {
-    if (!isAwaitingEvaResult || evaTimeLeft <= 0) return;
+    if (!isAwaitingEvaResult || evaTimeLeft <= 0 || challengeType !== 'TYPING') return;
     const interval = setInterval(() => {
       const elapsed = (Date.now() - evaStartTime) / 1000;
       const remaining = Math.max(0, 8 - elapsed);
@@ -180,7 +204,48 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [isAwaitingEvaResult, evaStartTime, evaTimeLeft, handleEvaResult]);
+  }, [isAwaitingEvaResult, evaStartTime, evaTimeLeft, handleEvaResult, challengeType]);
+
+  // Trivia countdown timer
+  useEffect(() => {
+    if (challengeType !== 'TRIVIA' || !isAwaitingEvaResult || triviaFeedback) return;
+    const interval = setInterval(() => {
+      const elapsed = (Date.now() - triviaStartTime) / 1000;
+      const remaining = Math.max(0, 15 - elapsed);
+      setTriviaTimeLeft(remaining);
+      if (remaining <= 0) {
+        const correctAnswer = triviaQuestion?.options[triviaQuestion.correctIndex] ?? '';
+        setTriviaFeedback({ type: 'timeout', correctAnswer });
+        setTimeout(() => handleEvaResult(EvaOutcome.Aborted), 1500);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [challengeType, isAwaitingEvaResult, triviaStartTime, handleEvaResult, triviaFeedback, triviaQuestion]);
+
+  // Trivia keyboard handler
+  useEffect(() => {
+    if (challengeType !== 'TRIVIA' || !isAwaitingEvaResult || !triviaQuestion || triviaFeedback) return;
+
+    function handleKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement) return;
+      if (e.key >= '1' && e.key <= '4') {
+        e.preventDefault();
+        e.stopPropagation();
+        const answerIdx = parseInt(e.key) - 1;
+        const correct = answerIdx === triviaQuestion!.correctIndex;
+        if (correct) {
+          setTriviaFeedback({ type: 'correct' });
+        } else {
+          setTriviaFeedback({ type: 'wrong', correctAnswer: triviaQuestion!.options[triviaQuestion!.correctIndex] });
+        }
+        setTimeout(() => {
+          handleEvaResult(correct ? EvaOutcome.Successful : EvaOutcome.Fumble);
+        }, 1500);
+      }
+    }
+    document.addEventListener('keydown', handleKey, true);
+    return () => document.removeEventListener('keydown', handleKey, true);
+  }, [challengeType, isAwaitingEvaResult, triviaQuestion, handleEvaResult, triviaFeedback]);
 
   // EVA typing submit handler
   const handleEvaSubmit = useCallback(() => {
@@ -353,7 +418,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
           <NarrativeLog entries={narrative} />
 
           {/* EVA Skill Challenge UI */}
-          {isAwaitingEvaResult && (
+          {isAwaitingEvaResult && challengeType === 'TYPING' && (
             <div aria-live="assertive" style={{
               ...BASE_STYLES.panel,
               margin: '0 12px',
@@ -430,6 +495,141 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                 <div>
                   Wrong word = FUMBLE │ No input = ABORTED
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* EVA Trivia Challenge UI */}
+          {isAwaitingEvaResult && challengeType === 'TRIVIA' && triviaQuestion && (
+            <div aria-live="assertive" style={{
+              ...BASE_STYLES.panel,
+              margin: '0 12px',
+              textAlign: 'center',
+              padding: '16px',
+            }}>
+              <div style={{ color: COLORS.info, marginBottom: '8px', fontSize: '14px', fontWeight: 'bold', letterSpacing: '2px' }}>
+                ─── SPACE TRIVIA CHALLENGE ───
+              </div>
+
+              {triviaFeedback ? (
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  padding: '24px 0',
+                  fontFamily: FONTS.mono,
+                  color: triviaFeedback.type === 'correct' ? COLORS.success
+                    : triviaFeedback.type === 'wrong' ? COLORS.danger
+                    : COLORS.warning,
+                }}>
+                  {triviaFeedback.type === 'correct' && (isRetro ? '[OK] CORRECT!' : '✓ CORRECT!')}
+                  {triviaFeedback.type === 'wrong' && (
+                    <>
+                      {isRetro ? '[X] WRONG' : '✗ WRONG'}
+                      <div style={{ fontSize: '13px', marginTop: '8px', color: COLORS.textDim }}>
+                        The answer was: {triviaFeedback.correctAnswer}
+                      </div>
+                    </>
+                  )}
+                  {triviaFeedback.type === 'timeout' && (
+                    <>
+                      {isRetro ? '[!] TIME\'S UP!' : "⏱ TIME'S UP!"}
+                      <div style={{ fontSize: '13px', marginTop: '8px', color: COLORS.textDim }}>
+                        The answer was: {triviaFeedback.correctAnswer}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <p style={{
+                    color: COLORS.text,
+                    fontSize: '14px',
+                    margin: '12px 16px',
+                    lineHeight: '1.5',
+                  }}>
+                    {triviaQuestion.question}
+                  </p>
+
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                    margin: '12px 0',
+                    textAlign: 'left',
+                    padding: '0 24px',
+                  }}>
+                    {triviaQuestion.options.map((option, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          const correct = idx === triviaQuestion.correctIndex;
+                          if (correct) {
+                            setTriviaFeedback({ type: 'correct' });
+                          } else {
+                            setTriviaFeedback({ type: 'wrong', correctAnswer: triviaQuestion.options[triviaQuestion.correctIndex] });
+                          }
+                          setTimeout(() => {
+                            handleEvaResult(correct ? EvaOutcome.Successful : EvaOutcome.Fumble);
+                          }, 1500);
+                        }}
+                        onMouseEnter={() => setHoveredBtn(`trivia-${idx}`)}
+                        onMouseLeave={() => setHoveredBtn(null)}
+                        style={{
+                          ...BASE_STYLES.button,
+                          textAlign: 'left',
+                          padding: '6px 12px',
+                          display: 'flex',
+                          gap: '8px',
+                          alignItems: 'baseline',
+                          fontSize: '13px',
+                          ...(hoveredBtn === `trivia-${idx}` ? {
+                            backgroundColor: COLORS.buttonHover,
+                            color: COLORS.text,
+                          } : {}),
+                        }}
+                      >
+                        <span style={{ color: COLORS.highlight, minWidth: '28px', fontFamily: FONTS.mono }}>
+                          ({idx + 1})
+                        </span>
+                        <span>{option}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '16px',
+                    marginBottom: '8px',
+                  }}>
+                    <div style={{
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      fontFamily: FONTS.mono,
+                      color: triviaTimeLeft > 8 ? COLORS.success : triviaTimeLeft > 4 ? COLORS.warning : COLORS.danger,
+                    }}>
+                      Time: {triviaTimeLeft.toFixed(1)}s
+                    </div>
+                    <div style={{
+                      fontSize: '11px',
+                      color: COLORS.muted,
+                      fontFamily: FONTS.mono,
+                    }}>
+                      │ Press 1-4 to answer
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div style={{
+                fontSize: '10px',
+                color: COLORS.textDim,
+                borderTop: `1px solid ${COLORS.border}`,
+                paddingTop: '8px',
+                fontFamily: FONTS.mono,
+              }}>
+                Category: {triviaQuestion.category.replace(/_/g, ' ')} │ Difficulty: {triviaQuestion.difficulty}
               </div>
             </div>
           )}
