@@ -234,8 +234,8 @@ export function processTurn(state: GameState, rng: Rng): { state: GameState; nar
     }
   }
 
-  // Update narrative log
-  s.narrativeLog = [...s.narrativeLog, ...narrative];
+  // Do NOT append to narrativeLog here — the engine's executeCommand handles that
+  // to avoid double-appending when it collects turnResult.narrative
 
   return { state: s, narrative };
 }
