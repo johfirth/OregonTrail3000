@@ -9,7 +9,7 @@ interface SettingsScreenProps {
 
 export default function SettingsScreen({ onClose }: SettingsScreenProps): React.ReactElement {
   const { settings, updateSettings, resetSettings } = useSettings();
-  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
 
   useEffect(() => {
@@ -132,7 +132,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           textTransform: 'uppercase',
           marginBottom: '4px',
         }}>
-          ⚙ SETTINGS
+          {isRetro ? '[SETTINGS]' : '⚙'} SETTINGS
         </h1>
         <div style={{
           color: COLORS.muted,
@@ -146,7 +146,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
         {/* === DISPLAY === */}
         <SectionHeader title="Display" />
 
-        <SettingRow label="🎨 Theme">
+        <SettingRow label={`${isRetro ? '[THEME]' : '🎨'} Theme`}>
           <ToggleButton
             id="theme-nasa"
             label="NASA Modern"
@@ -163,7 +163,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           <ThemePreview mode={ThemeMode.Retro80s} />
         </SettingRow>
 
-        <SettingRow label="📏 Font Size">
+        <SettingRow label={`${isRetro ? '[FONT]' : '📏'} Font Size`}>
           <ToggleButton
             id="font-small"
             label="Small"
@@ -184,7 +184,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           />
         </SettingRow>
 
-        <SettingRow label="📜 Log Lines">
+        <SettingRow label={`${isRetro ? '[LOG]' : '📜'} Log Lines`}>
           {[25, 50, 100].map(n => (
             <ToggleButton
               key={n}
@@ -199,7 +199,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
         {/* === GAMEPLAY === */}
         <SectionHeader title="Gameplay" />
 
-        <SettingRow label="⌨️ Keyboard Hints">
+        <SettingRow label={`${isRetro ? '[KEYS]' : '⌨️'} Keyboard Hints`}>
           <ToggleButton
             id="kb-on"
             label="On"
@@ -214,7 +214,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           />
         </SettingRow>
 
-        <SettingRow label="👥 Crew Panel">
+        <SettingRow label={`${isRetro ? '[CREW]' : '👥'} Crew Panel`}>
           <ToggleButton
             id="crew-on"
             label="On"
@@ -229,7 +229,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           />
         </SettingRow>
 
-        <SettingRow label="💾 Auto-Save">
+        <SettingRow label={`${isRetro ? '[SAVE]' : '💾'} Auto-Save`}>
           <ToggleButton
             id="auto-on"
             label="On"
@@ -247,7 +247,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
         {/* === TEXT === */}
         <SectionHeader title="Text" />
 
-        <SettingRow label="⚡ Text Speed">
+        <SettingRow label={`${isRetro ? '[SPEED]' : '⚡'} Text Speed`}>
           {([
             [TextSpeed.Slow, 'Slow'],
             [TextSpeed.Normal, 'Normal'],
@@ -297,7 +297,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
               ...(hoveredBtn === 'reset' ? { opacity: 0.8 } : {}),
             }}
           >
-            🔄 Reset to Defaults
+            {isRetro ? '[RESET]' : '🔄'} Reset to Defaults
           </button>
         </div>
       </div>

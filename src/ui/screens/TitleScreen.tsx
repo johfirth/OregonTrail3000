@@ -11,7 +11,14 @@ interface TitleScreenProps {
   onOpenSettings: () => void;
 }
 
-const ASCII_TITLE = `
+const ASCII_TITLE_RETRO = `
+ +---------------------------------------+
+ |    *  A R T E M I S   T R A I L  *    |
+ |         .  .  .  *   .  .  .          |
+ |     E A R T H  ->  ->  ->  M O O N   |
+ +---------------------------------------+`;
+
+const ASCII_TITLE_MODERN = `
  ╔═══════════════════════════════════════╗
  ║    ★  A R T E M I S   T R A I L  ★   ║
  ║         ·  ·  ·  🌙  ·  ·  ·         ║
@@ -136,7 +143,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
           fontWeight: 'normal',
           whiteSpace: 'pre',
         }}>
-          {ASCII_TITLE}
+          {isRetro ? ASCII_TITLE_RETRO : ASCII_TITLE_MODERN}
         </h1>
 
         <p style={{
@@ -147,7 +154,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
           textTransform: 'uppercase',
           fontFamily: FONTS.display,
         }}>
-          🚀 The Oregon Trail... TO THE MOON 🌙
+          {isRetro ? '>' : '🚀'} The Oregon Trail... TO THE MOON {isRetro ? '*' : '🌙'}
         </p>
 
         {/* Commander Name */}
@@ -235,8 +242,13 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
               ...(hoveredBtn === 'start' && commanderName.trim() ? BASE_STYLES.buttonHover : {}),
             }}
           >
-            🚀 NEW MISSION
+            {isRetro ? '>' : '🚀'} NEW MISSION
           </button>
+          {!commanderName.trim() && (
+            <div style={{ color: COLORS.muted, fontSize: '11px', marginTop: '4px' }}>
+              Enter your commander name above to begin
+            </div>
+          )}
 
           {hasSavedGame() && (
             <button
@@ -248,7 +260,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
                 ...(hoveredBtn === 'load' ? BASE_STYLES.buttonHover : {}),
               }}
             >
-              📂 LOAD SAVED GAME
+              {isRetro ? '[LOAD]' : '📂'} LOAD SAVED GAME
             </button>
           )}
 
@@ -262,7 +274,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
               ...(hoveredBtn === 'intro' ? BASE_STYLES.buttonHover : {}),
             }}
           >
-            📖 MISSION BRIEFING
+            {isRetro ? '[INFO]' : '📖'} MISSION BRIEFING
           </button>
         </div>
       </div>
@@ -283,7 +295,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
             ...(hoveredBtn === 'settings' ? BASE_STYLES.buttonHover : {}),
           }}
         >
-          ⚙️ Settings
+          {isRetro ? '[SETTINGS]' : '⚙️'} Settings
         </button>
       </div>
 

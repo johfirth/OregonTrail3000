@@ -39,12 +39,12 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
   const totalCrew = state.crew.length;
 
   const resources = [
-    { label: 'FU', value: state.resources[ResourceType.Propulsion], key: ResourceType.Propulsion },
-    { label: 'SD', value: Math.round(state.resources[ResourceType.LifeSupport] * 10) / 10, key: ResourceType.LifeSupport },
-    { label: 'PU', value: state.resources[ResourceType.SpareParts], key: ResourceType.SpareParts },
-    { label: 'SR', value: state.resources[ResourceType.Shielding], key: ResourceType.Shielding },
-    { label: 'MU', value: state.resources[ResourceType.Medical], key: ResourceType.Medical },
-    { label: 'CR', value: state.resources[ResourceType.Budget], key: ResourceType.Budget },
+    { label: 'FU', tooltip: 'Fuel Units (Propulsion)', value: state.resources[ResourceType.Propulsion], key: ResourceType.Propulsion },
+    { label: 'SD', tooltip: 'Supply Days (Life Support)', value: Math.round(state.resources[ResourceType.LifeSupport] * 10) / 10, key: ResourceType.LifeSupport },
+    { label: 'PU', tooltip: 'Part Units (Spare Parts)', value: state.resources[ResourceType.SpareParts], key: ResourceType.SpareParts },
+    { label: 'SR', tooltip: 'Shield Rating (Radiation Shielding)', value: state.resources[ResourceType.Shielding], key: ResourceType.Shielding },
+    { label: 'MU', tooltip: 'Med Units (Medical Supplies)', value: state.resources[ResourceType.Medical], key: ResourceType.Medical },
+    { label: 'CR', tooltip: 'Credits (Mission Budget)', value: state.resources[ResourceType.Budget], key: ResourceType.Budget },
   ];
 
   return (
@@ -72,7 +72,7 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
         flexWrap: 'wrap',
       }}>
         {resources.map(r => (
-          <span key={r.key}>
+          <span key={r.key} title={r.tooltip}>
             <span style={{ color: COLORS.textDim }}>{r.label}: </span>
             <span style={{ color: getResourceColor(r.value, RESOURCE_MAXES[r.key] || 100, COLORS) }}>
               {r.value}
@@ -88,7 +88,7 @@ export default function StatusBar({ state }: StatusBarProps): React.ReactElement
         </span>
         <span style={{ color: COLORS.border }}>│</span>
         <span style={{ color: COLORS.info }}>
-          {CONSUMPTION_LABELS[state.consumptionLevel]}
+          <span style={{ color: COLORS.textDim }}>CONSUMPTION: </span>{CONSUMPTION_LABELS[state.consumptionLevel]}
         </span>
       </div>
     </div>

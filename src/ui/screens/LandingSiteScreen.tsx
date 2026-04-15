@@ -8,13 +8,15 @@ interface LandingSiteScreenProps {
   onCommand: (command: GameCommand) => void;
 }
 
-function StarRating({ value, max = 5 }: { value: number; max?: number }): React.ReactElement {
-  const stars = '★'.repeat(value) + '☆'.repeat(max - value);
+function StarRating({ value, max = 5, isRetro = false }: { value: number; max?: number; isRetro?: boolean }): React.ReactElement {
+  const filled = isRetro ? '*' : '★';
+  const empty = isRetro ? '.' : '☆';
+  const stars = filled.repeat(value) + empty.repeat(max - value);
   return <span>{stars}</span>;
 }
 
 export default function LandingSiteScreen({ state, onCommand }: LandingSiteScreenProps): React.ReactElement {
-  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
@@ -152,26 +154,26 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
                 <div>
                   <span style={{ color: COLORS.textDim }}>Sunlight: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.sunlight} />
+                    <StarRating value={site.sunlight} isRetro={isRetro} />
                   </span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Ice Access: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.iceAccess} />
+                    <StarRating value={site.iceAccess} isRetro={isRetro} />
                   </span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Terrain: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.terrainDifficulty} />
+                    <StarRating value={site.terrainDifficulty} isRetro={isRetro} />
                   </span>
                   <span style={{ color: COLORS.muted, fontSize: '10px' }}> (lower=safer)</span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Comms: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.communications} />
+                    <StarRating value={site.communications} isRetro={isRetro} />
                   </span>
                 </div>
               </div>
@@ -195,7 +197,7 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
             ...(hoveredBtn === 'select' && selectedId ? BASE_STYLES.buttonHover : {}),
           }}
         >
-          🌑 CONFIRM LANDING SITE
+          {isRetro ? '[SELECT]' : '🌑'} CONFIRM LANDING SITE
         </button>
         {/* Keyboard help hint */}
         <div

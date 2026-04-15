@@ -344,9 +344,9 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                     {([
-                      { level: ConsumptionLevel.Rationing, key: '1', icon: '🔴', desc: 'Crew is hungry and cold' },
-                      { level: ConsumptionLevel.Standard, key: '2', icon: '🟡', desc: 'Normal consumption' },
-                      { level: ConsumptionLevel.Generous, key: '3', icon: '🟢', desc: 'Full meals, maximum comfort' },
+                      { level: ConsumptionLevel.Rationing, key: '1', icon: isRetro ? '[-]' : '🔴', desc: 'Crew is hungry and cold' },
+                      { level: ConsumptionLevel.Standard, key: '2', icon: isRetro ? '[=]' : '🟡', desc: 'Normal consumption' },
+                      { level: ConsumptionLevel.Generous, key: '3', icon: isRetro ? '[+]' : '🟢', desc: 'Full meals, maximum comfort' },
                     ] as const).map(({ level, key, icon, desc }) => {
                       const isCurrent = state.consumptionLevel === level;
                       return (
@@ -490,7 +490,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                     ...(hoveredBtn === 'settings' ? BASE_STYLES.buttonHover : {}),
                   }}
                 >
-                  ⚙️ Settings
+                  {isRetro ? '[SETTINGS]' : '⚙️'} Settings
                 </button>
                 {actions.some(a => a.command === 'SAVE_GAME') && (
                   <button
@@ -504,7 +504,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                       ...(hoveredBtn === 'save' ? BASE_STYLES.buttonHover : {}),
                     }}
                   >
-                    💾 SAVE
+                    {isRetro ? '[SAVE]' : '💾'} SAVE
                   </button>
                 )}
               </div>

@@ -52,7 +52,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
       } as React.CSSProperties,
 
       buttonHover: {
-        backgroundColor: COLORS.bgDark,
+        backgroundColor: 'transparent',
         color: COLORS.highlight,
       } as React.CSSProperties,
 

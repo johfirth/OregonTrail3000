@@ -21,7 +21,7 @@ interface ResourceAllocation {
 }
 
 export default function MissionPrepScreen({ state, onCommand, onCommands }: MissionPrepScreenProps): React.ReactElement {
-  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
   const mods = DIFFICULTY_MODIFIERS[state.difficulty];
   const totalBudget = mods.availableBudget;
 
@@ -188,7 +188,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
         <span style={{ color: COLORS.muted }}> / {totalBudget} CR</span>
         {isOverBudget && (
           <div style={{ color: COLORS.danger, fontSize: '12px', marginTop: '4px' }}>
-            ⚠ OVER BUDGET — Reduce allocations
+            {isRetro ? '[!]' : '⚠'} OVER BUDGET — Reduce allocations
           </div>
         )}
       </div>
@@ -340,7 +340,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
             ...(hoveredBtn === 'launch' && !isOverBudget && hasMinFuel ? { backgroundColor: '#E0351D' } : {}),
           }}
         >
-          🚀 LAUNCH MISSION
+          {isRetro ? '>' : '🚀'} LAUNCH MISSION
         </button>
         {!hasMinFuel && (
           <div style={{ color: COLORS.danger, fontSize: '11px', marginTop: '8px' }}>

@@ -7,15 +7,15 @@ interface CrewPanelProps {
   crew: CrewMember[];
 }
 
-const ROLE_ICONS: Record<CrewRole, string> = {
-  [CrewRole.Commander]: '★',
-  [CrewRole.Pilot]: '✈',
-  [CrewRole.Engineer]: '⚙',
-  [CrewRole.Scientist]: '⚗',
-};
-
 export default function CrewPanel({ crew }: CrewPanelProps): React.ReactElement {
-  const { COLORS, FONTS } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+
+  const ROLE_ICONS: Record<CrewRole, string> = {
+    [CrewRole.Commander]: isRetro ? '*' : '★',
+    [CrewRole.Pilot]: isRetro ? '>' : '✈',
+    [CrewRole.Engineer]: isRetro ? '#' : '⚙',
+    [CrewRole.Scientist]: isRetro ? '+' : '⚗',
+  };
 
   const HEALTH_COLORS: Record<HealthStatus, string> = {
     [HealthStatus.Healthy]: COLORS.healthy,
@@ -71,7 +71,7 @@ export default function CrewPanel({ crew }: CrewPanelProps): React.ReactElement 
             }}>
               {ROLE_ICONS[member.role]} {member.name}
             </span>
-            {!member.isAlive && <span>☠️</span>}
+            {!member.isAlive && <span>{isRetro ? '[X]' : '☠️'}</span>}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{
