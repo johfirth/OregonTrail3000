@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import type { GameState, GameCommand, GameAction, NarrativeEntry } from '../../engine/types';
-import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, ResourceType } from '../../engine/types';
+import { Phase, ConsumptionLevel, LaunchProfile, SurfaceActivity, EvaOutcome, ResourceType, CONSUMPTION_RATES, ILLNESS_MODIFIERS } from '../../engine/types';
 import StatusBar from '../components/StatusBar';
 import NarrativeLog from '../components/NarrativeLog';
 import CrewPanel from '../components/CrewPanel';
@@ -24,6 +24,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
   const [fuelInput, setFuelInput] = useState('15');
   const [descentFuelInput, setDescentFuelInput] = useState('60');
+  const [showConsumptionMenu, setShowConsumptionMenu] = useState(false);
 
   // Check if we're waiting for an EVA skill result
   const isAwaitingEvaResult = state.currentEvent?.id?.startsWith('eva-pending-') ?? false;
@@ -51,11 +52,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
       }
 
       case 'SET_CONSUMPTION': {
-        // Cycle consumption levels
-        const levels = [ConsumptionLevel.Rationing, ConsumptionLevel.Standard, ConsumptionLevel.Generous];
-        const currentIdx = levels.indexOf(state.consumptionLevel);
-        const nextLevel = levels[(currentIdx + 1) % levels.length];
-        onCommand({ type: 'SET_CONSUMPTION', level: nextLevel });
+        setShowConsumptionMenu(true);
         break;
       }
 
@@ -195,6 +192,21 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isAwaitingEvaResult, displayActions, handleAction, focusedIdx]);
 
+  // Keyboard handler for consumption sub-menu
+  useEffect(() => {
+    if (!showConsumptionMenu) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === '1') { onCommand({ type: 'SET_CONSUMPTION', level: ConsumptionLevel.Rationing }); setShowConsumptionMenu(false); }
+      if (e.key === '2') { onCommand({ type: 'SET_CONSUMPTION', level: ConsumptionLevel.Standard }); setShowConsumptionMenu(false); }
+      if (e.key === '3') { onCommand({ type: 'SET_CONSUMPTION', level: ConsumptionLevel.Generous }); setShowConsumptionMenu(false); }
+      if (e.key === 'Escape') { setShowConsumptionMenu(false); }
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    document.addEventListener('keydown', handleKey, true);
+    return () => document.removeEventListener('keydown', handleKey, true);
+  }, [showConsumptionMenu, onCommand]);
+
   return (
     <div style={{
       ...BASE_STYLES.container,
@@ -322,6 +334,73 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
               borderTop: `1px solid ${COLORS.border}`,
               backgroundColor: COLORS.bgPanel,
             }}>
+              {showConsumptionMenu ? (
+                <>
+                  <h2 style={{ color: COLORS.info, marginBottom: '6px', fontSize: '11px', margin: 0, fontWeight: 'normal' }}>
+                    ─── SET CONSUMPTION LEVEL ───
+                  </h2>
+                  <div style={{ color: COLORS.textDim, fontSize: '11px', marginBottom: '8px', marginTop: '4px' }}>
+                    Current: {state.consumptionLevel} ({CONSUMPTION_RATES[state.consumptionLevel]} SD/turn)
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    {([
+                      { level: ConsumptionLevel.Rationing, key: '1', icon: '🔴', desc: 'Crew is hungry and cold' },
+                      { level: ConsumptionLevel.Standard, key: '2', icon: '🟡', desc: 'Normal consumption' },
+                      { level: ConsumptionLevel.Generous, key: '3', icon: '🟢', desc: 'Full meals, maximum comfort' },
+                    ] as const).map(({ level, key, icon, desc }) => {
+                      const isCurrent = state.consumptionLevel === level;
+                      return (
+                        <button
+                          key={level}
+                          onClick={() => { onCommand({ type: 'SET_CONSUMPTION', level }); setShowConsumptionMenu(false); }}
+                          onMouseEnter={() => setHoveredBtn(`consumption-${level}`)}
+                          onMouseLeave={() => setHoveredBtn(null)}
+                          style={{
+                            ...BASE_STYLES.button,
+                            textAlign: 'left',
+                            padding: '5px 10px',
+                            display: 'flex',
+                            gap: '8px',
+                            alignItems: 'baseline',
+                            ...(isCurrent ? { outline: `1px solid ${COLORS.highlight}`, outlineOffset: '-1px' } : {}),
+                            ...(hoveredBtn === `consumption-${level}` ? { backgroundColor: COLORS.buttonHover, color: COLORS.text } : {}),
+                          }}
+                        >
+                          <span style={{ color: COLORS.highlight, minWidth: '24px' }}>({key})</span>
+                          <span style={{ minWidth: '24px' }}>{icon}</span>
+                          <span style={{ minWidth: '100px', fontWeight: isCurrent ? 'bold' : 'normal' }}>{level}</span>
+                          <span style={{ color: COLORS.textDim, fontSize: '11px', minWidth: '80px' }}>
+                            {CONSUMPTION_RATES[level]} SD/turn
+                          </span>
+                          <span style={{ color: COLORS.muted, fontSize: '11px', minWidth: '100px' }}>
+                            ×{ILLNESS_MODIFIERS[level].toFixed(1)} illness risk
+                          </span>
+                          <span style={{ color: COLORS.muted, fontSize: '11px' }}>{desc}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ color: COLORS.muted, fontSize: '10px', letterSpacing: '0.5px' }}>
+                      Press 1-3 to select, Escape to cancel
+                    </div>
+                    <button
+                      onClick={() => setShowConsumptionMenu(false)}
+                      onMouseEnter={() => setHoveredBtn('cancel-consumption')}
+                      onMouseLeave={() => setHoveredBtn(null)}
+                      style={{
+                        ...BASE_STYLES.button,
+                        fontSize: '10px',
+                        padding: '3px 8px',
+                        ...(hoveredBtn === 'cancel-consumption' ? BASE_STYLES.buttonHover : {}),
+                      }}
+                    >
+                      ← Back
+                    </button>
+                  </div>
+                </>
+              ) : (
+              <>
               <h2 style={{ color: COLORS.textDim, marginBottom: '4px', fontSize: '11px', margin: 0, fontWeight: 'normal' }}>
                 ─── AVAILABLE ACTIONS ───
               </h2>
@@ -429,6 +508,8 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                   </button>
                 )}
               </div>
+              </>
+              )}
             </div>
           )}
         </div>
