@@ -38,7 +38,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
         costPerUnit: costs[ResourceType.Propulsion].costPerUnit,
         minUnits: costs[ResourceType.Propulsion].minPurchase / costs[ResourceType.Propulsion].costPerUnit,
         maxUnits: costs[ResourceType.Propulsion].maxPurchase / costs[ResourceType.Propulsion].costPerUnit,
-        units: 250,
+        units: 220,
       },
       {
         key: ResourceType.LifeSupport,
@@ -48,7 +48,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
         costPerUnit: costs[ResourceType.LifeSupport].costPerUnit,
         minUnits: 0,
         maxUnits: costs[ResourceType.LifeSupport].maxPurchase / costs[ResourceType.LifeSupport].costPerUnit,
-        units: 40,
+        units: 25,
       },
       {
         key: ResourceType.SpareParts,
@@ -58,7 +58,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
         costPerUnit: costs[ResourceType.SpareParts].costPerUnit,
         minUnits: 0,
         maxUnits: costs[ResourceType.SpareParts].maxPurchase / costs[ResourceType.SpareParts].costPerUnit,
-        units: 20,
+        units: 12,
       },
       {
         key: ResourceType.Shielding,
@@ -68,7 +68,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
         costPerUnit: costs[ResourceType.Shielding].costPerUnit,
         minUnits: 0,
         maxUnits: costs[ResourceType.Shielding].maxPurchase / costs[ResourceType.Shielding].costPerUnit,
-        units: 10,
+        units: 8,
       },
       {
         key: ResourceType.Medical,
@@ -78,7 +78,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
         costPerUnit: costs[ResourceType.Medical].costPerUnit,
         minUnits: 0,
         maxUnits: costs[ResourceType.Medical].maxPurchase / costs[ResourceType.Medical].costPerUnit,
-        units: 8,
+        units: 5,
       },
     ];
   });

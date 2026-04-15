@@ -31,11 +31,11 @@ function allocateResources(engine: GameEngine, state: GameState): GameResult {
   return engine.executeCommand(state, {
     type: 'ALLOCATE_RESOURCES',
     resources: {
-      [ResourceType.Propulsion]: 350,
-      [ResourceType.LifeSupport]: 50,
-      [ResourceType.SpareParts]: 20,
-      [ResourceType.Shielding]: 10,
-      [ResourceType.Medical]: 10,
+      [ResourceType.Propulsion]: 250,
+      [ResourceType.LifeSupport]: 20,
+      [ResourceType.SpareParts]: 12,
+      [ResourceType.Shielding]: 8,
+      [ResourceType.Medical]: 5,
       [ResourceType.Budget]: 0,
     },
   });
@@ -105,20 +105,20 @@ describe('GameEngine', () => {
       const { engine, result } = createCadetGame();
       const allocated = allocateResources(engine, result.state);
 
-      expect(allocated.state.resources[ResourceType.Propulsion]).toBe(350);
-      expect(allocated.state.resources[ResourceType.LifeSupport]).toBe(50);
-      expect(allocated.state.resources[ResourceType.SpareParts]).toBe(20);
-      expect(allocated.state.resources[ResourceType.Shielding]).toBe(10);
-      expect(allocated.state.resources[ResourceType.Medical]).toBe(10);
+      expect(allocated.state.resources[ResourceType.Propulsion]).toBe(250);
+      expect(allocated.state.resources[ResourceType.LifeSupport]).toBe(20);
+      expect(allocated.state.resources[ResourceType.SpareParts]).toBe(12);
+      expect(allocated.state.resources[ResourceType.Shielding]).toBe(8);
+      expect(allocated.state.resources[ResourceType.Medical]).toBe(5);
     });
 
     it('sets remaining budget as reserve', () => {
       const { engine, result } = createCadetGame();
       const allocated = allocateResources(engine, result.state);
 
-      // Total cost: 350*1 + 50*5 + 20*5 + 10*10 + 10*10 = 350+250+100+100+100 = 900
-      // Available budget for Cadet: 1000
-      const expectedReserve = 1000 - 900;
+      // Total cost: 250*1 + 20*8 + 12*8 + 8*12 + 5*15 = 250+160+96+96+75 = 677
+      // Available budget for Cadet: 750
+      const expectedReserve = 750 - 677;
       expect(allocated.state.resources[ResourceType.Budget]).toBe(expectedReserve);
     });
 
@@ -326,7 +326,7 @@ describe('GameEngine', () => {
 
       // Allocate resources
       let r = allocateResources(engine, result.state);
-      expect(r.state.resources[ResourceType.Propulsion]).toBe(350);
+      expect(r.state.resources[ResourceType.Propulsion]).toBe(250);
 
       // Start mission
       r = engine.executeCommand(r.state, { type: 'START_MISSION' });
@@ -356,15 +356,15 @@ describe('GameEngine', () => {
       r = engine.executeCommand(r.state, {
         type: 'ALLOCATE_RESOURCES',
         resources: {
-          [ResourceType.Propulsion]: 350,
-          [ResourceType.LifeSupport]: 50,
-          [ResourceType.SpareParts]: 20,
-          [ResourceType.Shielding]: 10,
-          [ResourceType.Medical]: 10,
+          [ResourceType.Propulsion]: 250,
+          [ResourceType.LifeSupport]: 20,
+          [ResourceType.SpareParts]: 12,
+          [ResourceType.Shielding]: 8,
+          [ResourceType.Medical]: 5,
           [ResourceType.Budget]: 0,
         },
       });
-      expect(r.state.resources[ResourceType.Propulsion]).toBe(350);
+      expect(r.state.resources[ResourceType.Propulsion]).toBe(250);
 
       // Start mission
       r = engine.executeCommand(r.state, { type: 'START_MISSION' });

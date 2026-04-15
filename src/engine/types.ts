@@ -425,16 +425,16 @@ export const SPACECRAFT_COST = 200;
 
 // Life support consumption rates (SD per turn)
 export const CONSUMPTION_RATES: Record<ConsumptionLevel, number> = {
-  [ConsumptionLevel.Rationing]: 0.5,
-  [ConsumptionLevel.Standard]: 1.0,
-  [ConsumptionLevel.Generous]: 1.5,
+  [ConsumptionLevel.Rationing]: 1.0,
+  [ConsumptionLevel.Standard]: 1.8,
+  [ConsumptionLevel.Generous]: 2.5,
 };
 
 // Illness risk multipliers by consumption level
 export const ILLNESS_MODIFIERS: Record<ConsumptionLevel, number> = {
-  [ConsumptionLevel.Rationing]: 2.0,
-  [ConsumptionLevel.Standard]: 1.0,
-  [ConsumptionLevel.Generous]: 0.5,
+  [ConsumptionLevel.Rationing]: 3.0,
+  [ConsumptionLevel.Standard]: 1.5,
+  [ConsumptionLevel.Generous]: 0.8,
 };
 
 // Resource purchase costs (CR per unit)
@@ -448,28 +448,28 @@ export const RESOURCE_COSTS: Record<ResourceType, ResourceCost> = {
   },
   [ResourceType.LifeSupport]: {
     resourceType: ResourceType.LifeSupport,
-    costPerUnit: 5,
+    costPerUnit: 8,
     minPurchase: 0,
     maxPurchase: 400,
     unitLabel: 'Supply Days (SD)',
   },
   [ResourceType.SpareParts]: {
     resourceType: ResourceType.SpareParts,
-    costPerUnit: 5,
+    costPerUnit: 8,
     minPurchase: 0,
     maxPurchase: 250,
     unitLabel: 'Part Units (PU)',
   },
   [ResourceType.Shielding]: {
     resourceType: ResourceType.Shielding,
-    costPerUnit: 10,
+    costPerUnit: 12,
     minPurchase: 0,
     maxPurchase: 200,
     unitLabel: 'Shield Rating (SR)',
   },
   [ResourceType.Medical]: {
     resourceType: ResourceType.Medical,
-    costPerUnit: 10,
+    costPerUnit: 15,
     minPurchase: 0,
     maxPurchase: 150,
     unitLabel: 'Med Units (MU)',
@@ -485,9 +485,9 @@ export const RESOURCE_COSTS: Record<ResourceType, ResourceCost> = {
 
 // Launch profile parameters
 export const LAUNCH_PROFILES: Record<LaunchProfile, { fuelCost: number; complicationChance: number }> = {
-  [LaunchProfile.Conservative]: { fuelCost: 90, complicationChance: 0.05 },
-  [LaunchProfile.Standard]: { fuelCost: 80, complicationChance: 0.12 },
-  [LaunchProfile.Aggressive]: { fuelCost: 65, complicationChance: 0.25 },
+  [LaunchProfile.Conservative]: { fuelCost: 100, complicationChance: 0.05 },
+  [LaunchProfile.Standard]: { fuelCost: 85, complicationChance: 0.15 },
+  [LaunchProfile.Aggressive]: { fuelCost: 70, complicationChance: 0.30 },
 };
 
 // Maneuver fuel costs
@@ -512,11 +512,11 @@ export const EVA_ICE_BASE_YIELD = 3;         // SD
 export const EVA_REPAIR_YIELD_SR = 2;        // SR
 export const EVA_REPAIR_YIELD_PU = 1;        // PU
 export const EVA_SCIENCE_BASE_SCORE = 150;   // score points
-export const EVA_ICE_PARTS_COST = 2;         // PU consumed per ice extraction
-export const EVA_REPAIR_PARTS_COST = 3;      // PU required for repair
+export const EVA_ICE_PARTS_COST = 3;         // PU consumed per ice extraction
+export const EVA_REPAIR_PARTS_COST = 4;      // PU required for repair
 
 // Health system
-export const BASE_ILLNESS_CHANCE = 0.08;
+export const BASE_ILLNESS_CHANCE = 0.15;
 export const TURNS_BEFORE_HEALTH_WORSENS = 2;
 
 // Surface ops
@@ -549,68 +549,68 @@ export const SCORE_SPEED_TARGET_TURNS = 13;
 export const SCORE_NO_DEATHS_BONUS = 500;
 
 // Max mission turns before time-limit failure
-export const MAX_MISSION_TURNS = 18;
+export const MAX_MISSION_TURNS = 25;
 
 // Difficulty presets
 export const DIFFICULTY_MODIFIERS: Record<Difficulty, DifficultyModifiers> = {
   [Difficulty.Cadet]: {
-    startingBudget: 1200,
+    startingBudget: 950,
     spacecraftCost: 200,
-    availableBudget: 1000,
-    eventProbabilityMultiplier: 0.7,
-    turnsBeforeHealthWorsens: 3,
-    healthWorsenEarlyChance: 0,
-    evaAccidentMultiplier: 0.5,
-    gatewayPriceMultiplier: 1.25,
-    landingScoreBonus: 10,
-    surfaceBaseTurns: 6,
-    surfaceMaxTurns: 8,
-    baseIllnessChance: 0.05,
+    availableBudget: 750,
+    eventProbabilityMultiplier: 0.9,
+    turnsBeforeHealthWorsens: 2,
+    healthWorsenEarlyChance: 0.1,
+    evaAccidentMultiplier: 0.8,
+    gatewayPriceMultiplier: 1.5,
+    landingScoreBonus: 5,
+    surfaceBaseTurns: 7,
+    surfaceMaxTurns: 10,
+    baseIllnessChance: 0.15,
     saveLoadAllowed: true,
   },
   [Difficulty.Astronaut]: {
-    startingBudget: 1000,
+    startingBudget: 820,
     spacecraftCost: 200,
-    availableBudget: 800,
-    eventProbabilityMultiplier: 1.0,
+    availableBudget: 620,
+    eventProbabilityMultiplier: 1.3,
     turnsBeforeHealthWorsens: 2,
-    healthWorsenEarlyChance: 0,
-    evaAccidentMultiplier: 1.0,
-    gatewayPriceMultiplier: 1.5,
+    healthWorsenEarlyChance: 0.15,
+    evaAccidentMultiplier: 1.2,
+    gatewayPriceMultiplier: 1.75,
     landingScoreBonus: 0,
-    surfaceBaseTurns: 5,
-    surfaceMaxTurns: 8,
-    baseIllnessChance: 0.08,
+    surfaceBaseTurns: 7,
+    surfaceMaxTurns: 10,
+    baseIllnessChance: 0.18,
     saveLoadAllowed: true,
   },
   [Difficulty.Commander]: {
-    startingBudget: 800,
+    startingBudget: 825,
     spacecraftCost: 200,
-    availableBudget: 600,
-    eventProbabilityMultiplier: 1.3,
-    turnsBeforeHealthWorsens: 2,
-    healthWorsenEarlyChance: 0.5,
-    evaAccidentMultiplier: 1.3,
-    gatewayPriceMultiplier: 1.75,
-    landingScoreBonus: -10,
-    surfaceBaseTurns: 5,
-    surfaceMaxTurns: 8,
-    baseIllnessChance: 0.12,
+    availableBudget: 625,
+    eventProbabilityMultiplier: 1.6,
+    turnsBeforeHealthWorsens: 1,
+    healthWorsenEarlyChance: 0.3,
+    evaAccidentMultiplier: 1.5,
+    gatewayPriceMultiplier: 2.0,
+    landingScoreBonus: -15,
+    surfaceBaseTurns: 8,
+    surfaceMaxTurns: 12,
+    baseIllnessChance: 0.20,
     saveLoadAllowed: true,
   },
   [Difficulty.Ironman]: {
     startingBudget: 800,
     spacecraftCost: 200,
     availableBudget: 600,
-    eventProbabilityMultiplier: 1.5,
+    eventProbabilityMultiplier: 1.8,
     turnsBeforeHealthWorsens: 1,
-    healthWorsenEarlyChance: 0,
-    evaAccidentMultiplier: 1.5,
-    gatewayPriceMultiplier: 2.0,
-    landingScoreBonus: -15,
-    surfaceBaseTurns: 4,
-    surfaceMaxTurns: 8,
-    baseIllnessChance: 0.15,
+    healthWorsenEarlyChance: 0.2,
+    evaAccidentMultiplier: 1.8,
+    gatewayPriceMultiplier: 2.5,
+    landingScoreBonus: -20,
+    surfaceBaseTurns: 6,
+    surfaceMaxTurns: 10,
+    baseIllnessChance: 0.25,
     saveLoadAllowed: false,
   },
 };
