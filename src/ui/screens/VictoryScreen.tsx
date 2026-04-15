@@ -2,7 +2,9 @@ import React from 'react';
 import type { GameState, ScoreBreakdown, ScoreRating } from '../../engine/types';
 import { VictoryTier, ScoreRating as ScoreRatingEnum } from '../../engine/types';
 import { useTheme } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 import { NARRATIVE } from '../../content/narrative';
+import { ASCII_ART } from '../ascii-art';
 
 interface VictoryScreenProps {
   state: GameState;
@@ -21,7 +23,8 @@ const RATING_LABELS: Record<string, { label: string; description: string }> = {
 };
 
 export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPlayAgain }: VictoryScreenProps): React.ReactElement {
-  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+  const icons = useIcons();
 
   const TIER_BANNERS: Record<VictoryTier, { title: string; color: string }> = {
     [VictoryTier.ThrivingColony]: {
@@ -71,6 +74,20 @@ export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPl
       padding: '40px',
       overflow: 'auto',
     }}>
+      {/* ASCII Art for Retro */}
+      {isRetro && (
+        <div style={{
+          fontFamily: FONTS.mono,
+          fontSize: '12px',
+          color: COLORS.highlight,
+          whiteSpace: 'pre',
+          textAlign: 'center',
+          marginBottom: '16px',
+        }}>
+          {ASCII_ART.base}
+        </div>
+      )}
+
       {/* Victory Banner */}
       <div style={{
         textAlign: 'center',
@@ -198,7 +215,7 @@ export default function VictoryScreen({ state, scoreBreakdown, scoreRating, onPl
           ...(hoveredBtn === 'again' ? BASE_STYLES.buttonHover : {}),
         }}
       >
-        🚀 PLAY AGAIN
+        {icons.rocket} PLAY AGAIN
       </button>
       {/* Keyboard help hint */}
       <div

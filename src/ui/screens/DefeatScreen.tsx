@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import type { GameState } from '../../engine/types';
 import { useTheme } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 import { NARRATIVE } from '../../content/narrative';
+import { ASCII_ART } from '../ascii-art';
 
 interface DefeatScreenProps {
   state: GameState;
@@ -11,7 +13,8 @@ interface DefeatScreenProps {
 type DebriefStage = 'intro' | 'q1' | 'a1' | 'q2' | 'a2' | 'q3' | 'a3' | 'signature' | 'done';
 
 export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps): React.ReactElement {
-  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+  const icons = useIcons();
   const [stage, setStage] = useState<DebriefStage>('intro');
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
@@ -94,6 +97,18 @@ export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps):
         textAlign: 'center',
       }}>
         {/* Game Over Header */}
+        {isRetro && (
+          <div style={{
+            fontFamily: FONTS.mono,
+            fontSize: '12px',
+            color: COLORS.danger,
+            whiteSpace: 'pre',
+            textAlign: 'center',
+            marginBottom: '16px',
+          }}>
+            {ASCII_ART.tombstone}
+          </div>
+        )}
         <h1 style={{
           color: COLORS.danger,
           fontFamily: FONTS.display,
@@ -301,7 +316,7 @@ export default function DefeatScreen({ state, onPlayAgain }: DefeatScreenProps):
                   ...(hoveredBtn === 'again' ? BASE_STYLES.buttonHover : {}),
                 }}
               >
-                🚀 TRY AGAIN
+                {icons.rocket} TRY AGAIN
               </button>
             </div>
           )}

@@ -6,6 +6,8 @@ import NarrativeLog from '../components/NarrativeLog';
 import CrewPanel from '../components/CrewPanel';
 import { useTheme } from '../hooks/useTheme';
 import { useSettings } from '../hooks/useSettings';
+import { useIcons } from '../hooks/useIcons';
+import { ASCII_ART } from '../ascii-art';
 
 interface GameScreenProps {
   state: GameState;
@@ -18,6 +20,7 @@ interface GameScreenProps {
 export default function GameScreen({ state, narrative, actions, onCommand, onOpenSettings }: GameScreenProps): React.ReactElement {
   const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
   const { settings } = useSettings();
+  const icons = useIcons();
   const [showCrew, setShowCrew] = useState(true);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [focusedIdx, setFocusedIdx] = useState<number>(0);
@@ -331,9 +334,14 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
           {!isAwaitingEvaResult && displayActions.length > 0 && (
             <div style={{
               padding: '8px 12px',
-              borderTop: `1px solid ${COLORS.border}`,
+              borderTop: isRetro ? 'none' : `1px solid ${COLORS.border}`,
               backgroundColor: COLORS.bgPanel,
             }}>
+              {isRetro && (
+                <div style={{ color: COLORS.textDim, fontFamily: FONTS.mono, fontSize: '12px', marginBottom: '4px' }}>
+                  {ASCII_ART.thinDivider}
+                </div>
+              )}
               {showConsumptionMenu ? (
                 <>
                   <h2 style={{ color: COLORS.info, marginBottom: '6px', fontSize: '11px', margin: 0, fontWeight: 'normal' }}>
@@ -490,7 +498,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                     ...(hoveredBtn === 'settings' ? BASE_STYLES.buttonHover : {}),
                   }}
                 >
-                  {isRetro ? '[SETTINGS]' : '⚙️'} Settings
+                  {isRetro ? '[SETTINGS]' : icons.settings} Settings
                 </button>
                 {actions.some(a => a.command === 'SAVE_GAME') && (
                   <button
@@ -504,7 +512,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                       ...(hoveredBtn === 'save' ? BASE_STYLES.buttonHover : {}),
                     }}
                   >
-                    {isRetro ? '[SAVE]' : '💾'} SAVE
+                    {isRetro ? '[SAVE]' : icons.save} SAVE
                   </button>
                 )}
               </div>

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import type { GameState, GameCommand, Resources } from '../../engine/types';
 import { ResourceType, ConsumptionLevel, RESOURCE_COSTS, DIFFICULTY_MODIFIERS } from '../../engine/types';
 import { useTheme } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 
 interface MissionPrepScreenProps {
   state: GameState;
@@ -22,6 +23,7 @@ interface ResourceAllocation {
 
 export default function MissionPrepScreen({ state, onCommand, onCommands }: MissionPrepScreenProps): React.ReactElement {
   const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+  const icons = useIcons();
   const mods = DIFFICULTY_MODIFIERS[state.difficulty];
   const totalBudget = mods.availableBudget;
 
@@ -340,7 +342,7 @@ export default function MissionPrepScreen({ state, onCommand, onCommands }: Miss
             ...(hoveredBtn === 'launch' && !isOverBudget && hasMinFuel ? { backgroundColor: '#E0351D' } : {}),
           }}
         >
-          {isRetro ? '>' : '🚀'} LAUNCH MISSION
+          {isRetro ? '>' : icons.launch} LAUNCH MISSION
         </button>
         {!hasMinFuel && (
           <div style={{ color: COLORS.danger, fontSize: '11px', marginTop: '8px' }}>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ThemeMode, TextSpeed, FontSize } from '../../engine/types';
 import { useSettings } from '../hooks/useSettings';
 import { useTheme } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface SettingsScreenProps {
 export default function SettingsScreen({ onClose }: SettingsScreenProps): React.ReactElement {
   const { settings, updateSettings, resetSettings } = useSettings();
   const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+  const icons = useIcons();
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
     );
   }
 
-  function SettingRow({ label, children }: { label: string; children: React.ReactNode }) {
+  function SettingRow({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
     return (
       <div style={{
         display: 'flex',
@@ -132,7 +134,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           textTransform: 'uppercase',
           marginBottom: '4px',
         }}>
-          {isRetro ? '[SETTINGS]' : '⚙'} SETTINGS
+          {isRetro ? '[SETTINGS]' : icons.settings} SETTINGS
         </h1>
         <div style={{
           color: COLORS.muted,
@@ -184,7 +186,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           />
         </SettingRow>
 
-        <SettingRow label={`${isRetro ? '[LOG]' : '📜'} Log Lines`}>
+        <SettingRow label={<>{isRetro ? '[LOG]' : icons.doc} Log Lines</>}>
           {[25, 50, 100].map(n => (
             <ToggleButton
               key={n}
@@ -229,7 +231,7 @@ export default function SettingsScreen({ onClose }: SettingsScreenProps): React.
           />
         </SettingRow>
 
-        <SettingRow label={`${isRetro ? '[SAVE]' : '💾'} Auto-Save`}>
+        <SettingRow label={<>{isRetro ? '[SAVE]' : icons.save} Auto-Save</>}>
           <ToggleButton
             id="auto-on"
             label="On"

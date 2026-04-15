@@ -3,7 +3,13 @@ import { useMemo, useEffect } from 'react';
 import { useSettings } from './useSettings';
 import { getTheme } from '../themes';
 import type { Theme } from '../themes';
-import { ThemeMode } from '../../engine/types';
+import { ThemeMode, FontSize } from '../../engine/types';
+
+const FONT_SIZES: Record<FontSize, string> = {
+  [FontSize.Small]: '12px',
+  [FontSize.Medium]: '14px',
+  [FontSize.Large]: '16px',
+};
 
 export interface ThemeStyles {
   COLORS: Theme['colors'];
@@ -12,9 +18,10 @@ export interface ThemeStyles {
   isRetro: boolean;
 }
 
-function createBaseStyles(theme: Theme, isRetro: boolean) {
+function createBaseStyles(theme: Theme, isRetro: boolean, fontSize: FontSize) {
   const COLORS = theme.colors;
   const FONTS = theme.fonts;
+  const fs = FONT_SIZES[fontSize];
 
   if (isRetro) {
     return {
@@ -23,7 +30,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
         color: COLORS.text,
         fontFamily: FONTS.mono,
         minHeight: '100vh',
-        fontSize: '14px',
+        fontSize: fs,
         lineHeight: '1.6',
       } as React.CSSProperties,
 
@@ -34,6 +41,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
         borderRadius: '0',
         boxShadow: 'none',
         marginBottom: '8px',
+        fontSize: fs,
       } as React.CSSProperties,
 
       button: {
@@ -42,7 +50,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
         border: 'none',
         padding: '2px 4px',
         fontFamily: FONTS.mono,
-        fontSize: 'inherit',
+        fontSize: fs,
         cursor: 'pointer',
         borderRadius: '0',
         boxShadow: 'none',
@@ -62,7 +70,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
         border: 'none',
         padding: '2px 4px',
         fontFamily: FONTS.mono,
-        fontSize: 'inherit',
+        fontSize: fs,
         cursor: 'default',
         borderRadius: '0',
         boxShadow: 'none',
@@ -75,6 +83,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
         border: 'none',
         padding: '2px 4px',
         fontFamily: FONTS.mono,
+        fontSize: fs,
         cursor: 'pointer',
         borderRadius: '0',
         boxShadow: 'none',
@@ -86,7 +95,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
         border: `1px solid ${COLORS.text}`,
         padding: '4px 8px',
         fontFamily: FONTS.mono,
-        fontSize: 'inherit',
+        fontSize: fs,
         borderRadius: '0',
         outline: 'none',
         boxShadow: 'none',
@@ -108,7 +117,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
       backgroundColor: COLORS.bg,
       color: COLORS.text,
       fontFamily: FONTS.mono,
-      fontSize: '14px',
+      fontSize: fs,
       lineHeight: '1.6',
     } as React.CSSProperties,
 
@@ -118,6 +127,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
       backgroundColor: COLORS.bgPanel,
       marginBottom: '8px',
       borderRadius: '4px',
+      fontSize: fs,
     } as React.CSSProperties,
 
     button: {
@@ -125,7 +135,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
       color: COLORS.text,
       border: `1px solid ${COLORS.borderLight}`,
       fontFamily: FONTS.mono,
-      fontSize: '14px',
+      fontSize: fs,
       padding: '8px 16px',
       cursor: 'pointer',
       transition: 'all 0.15s',
@@ -137,7 +147,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
       color: '#8B95A5',
       border: `1px solid ${COLORS.border}`,
       fontFamily: FONTS.mono,
-      fontSize: '14px',
+      fontSize: fs,
       padding: '8px 16px',
       cursor: 'not-allowed',
       opacity: 0.5,
@@ -154,7 +164,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
       color: COLORS.text,
       border: `1px solid ${COLORS.accent}`,
       fontFamily: FONTS.mono,
-      fontSize: '14px',
+      fontSize: fs,
       padding: '8px 16px',
       cursor: 'pointer',
       transition: 'all 0.15s',
@@ -166,7 +176,7 @@ function createBaseStyles(theme: Theme, isRetro: boolean) {
       color: COLORS.text,
       border: `1px solid ${COLORS.border}`,
       fontFamily: FONTS.mono,
-      fontSize: '14px',
+      fontSize: fs,
       padding: '8px 12px',
       outline: 'none',
       borderRadius: '4px',
@@ -190,16 +200,20 @@ export function useTheme(): ThemeStyles {
     return {
       COLORS: theme.colors,
       FONTS: theme.fonts,
-      BASE_STYLES: createBaseStyles(theme, isRetro),
+      BASE_STYLES: createBaseStyles(theme, isRetro, settings.fontSize),
       isRetro,
     };
-  }, [settings.theme]);
+  }, [settings.theme, settings.fontSize]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--bg-color', styles.COLORS.bg);
     document.body.style.backgroundColor = styles.COLORS.bg;
     document.body.style.color = styles.COLORS.text;
   }, [styles.COLORS.bg, styles.COLORS.text]);
+
+  useEffect(() => {
+    document.documentElement.style.fontSize = FONT_SIZES[settings.fontSize];
+  }, [settings.fontSize]);
 
   return styles;
 }

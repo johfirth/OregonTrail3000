@@ -2,7 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import type { GameConfig } from '../../engine/types';
 import { Difficulty } from '../../engine/types';
 import { useTheme } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 import { NARRATIVE } from '../../content/narrative';
+import { ASCII_ART } from '../ascii-art';
 
 interface TitleScreenProps {
   onStartGame: (config: GameConfig) => void;
@@ -50,6 +52,7 @@ const DIFFICULTY_DESCRIPTIONS: Record<Difficulty, { label: string; budget: numbe
 
 export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onOpenSettings }: TitleScreenProps): React.ReactElement {
   const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+  const icons = useIcons();
   const [commanderName, setCommanderName] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Astronaut);
   const [showIntro, setShowIntro] = useState(false);
@@ -132,19 +135,40 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
         textAlign: 'center',
       }}>
         {/* ASCII Title */}
+        {isRetro ? (
+          <div style={{
+            fontFamily: FONTS.mono,
+            fontSize: '13px',
+            lineHeight: '1.2',
+            textAlign: 'left',
+            marginBottom: '8px',
+            whiteSpace: 'pre',
+            color: COLORS.text,
+          }}>
+{`        _.._
+      .' .-'        ╔═══════════════════════════╗
+     /  /           ║     ARTEMIS  TRAIL        ║
+    |  |            ╚═══════════════════════════╝
+    |  |  _.._
+     \\  \\.' .-'     The Oregon Trail... TO THE MOON
+      '.._ /
+          '`}
+          </div>
+        ) : (
         <h1 style={{
           color: COLORS.text,
           fontSize: '16px',
           lineHeight: '1.2',
           textAlign: 'center',
           marginBottom: '8px',
-          textShadow: isRetro ? 'none' : `0 0 15px ${COLORS.info}80`,
+          textShadow: `0 0 15px ${COLORS.info}80`,
           fontFamily: FONTS.mono,
           fontWeight: 'normal',
           whiteSpace: 'pre',
         }}>
-          {isRetro ? ASCII_TITLE_RETRO : ASCII_TITLE_MODERN}
+          {ASCII_TITLE_MODERN}
         </h1>
+        )}
 
         <p style={{
           color: COLORS.info,
@@ -154,7 +178,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
           textTransform: 'uppercase',
           fontFamily: FONTS.display,
         }}>
-          {isRetro ? '>' : '🚀'} The Oregon Trail... TO THE MOON {isRetro ? '*' : '🌙'}
+          {isRetro ? '>' : icons.rocket} The Oregon Trail... TO THE MOON {isRetro ? '*' : '🌙'}
         </p>
 
         {/* Commander Name */}
@@ -242,7 +266,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
               ...(hoveredBtn === 'start' && commanderName.trim() ? BASE_STYLES.buttonHover : {}),
             }}
           >
-            {isRetro ? '>' : '🚀'} NEW MISSION
+            {isRetro ? '>' : icons.rocket} NEW MISSION
           </button>
           {!commanderName.trim() && (
             <div style={{ color: COLORS.muted, fontSize: '11px', marginTop: '4px' }}>
@@ -295,7 +319,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
             ...(hoveredBtn === 'settings' ? BASE_STYLES.buttonHover : {}),
           }}
         >
-          {isRetro ? '[SETTINGS]' : '⚙️'} Settings
+          {isRetro ? '[SETTINGS]' : icons.settings} Settings
         </button>
       </div>
 

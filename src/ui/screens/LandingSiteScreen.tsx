@@ -2,21 +2,24 @@ import React, { useState, useEffect } from 'react';
 import type { GameState, GameCommand, LandingSite } from '../../engine/types';
 import { LANDING_SITES } from '../../engine/types';
 import { useTheme } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 
 interface LandingSiteScreenProps {
   state: GameState;
   onCommand: (command: GameCommand) => void;
 }
 
-function StarRating({ value, max = 5, isRetro = false }: { value: number; max?: number; isRetro?: boolean }): React.ReactElement {
-  const filled = isRetro ? '*' : '★';
-  const empty = isRetro ? '.' : '☆';
-  const stars = filled.repeat(value) + empty.repeat(max - value);
+function StarRating({ value, max = 5, icons }: { value: number; max?: number; icons: ReturnType<typeof useIcons> }): React.ReactElement {
+  const stars = [];
+  for (let i = 0; i < max; i++) {
+    stars.push(<React.Fragment key={i}>{icons.star(i < value)}</React.Fragment>);
+  }
   return <span>{stars}</span>;
 }
 
 export default function LandingSiteScreen({ state, onCommand }: LandingSiteScreenProps): React.ReactElement {
   const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+  const icons = useIcons();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
@@ -154,26 +157,26 @@ export default function LandingSiteScreen({ state, onCommand }: LandingSiteScree
                 <div>
                   <span style={{ color: COLORS.textDim }}>Sunlight: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.sunlight} isRetro={isRetro} />
+                    <StarRating value={site.sunlight} icons={icons} />
                   </span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Ice Access: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.iceAccess} isRetro={isRetro} />
+                    <StarRating value={site.iceAccess} icons={icons} />
                   </span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Terrain: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.terrainDifficulty} isRetro={isRetro} />
+                    <StarRating value={site.terrainDifficulty} icons={icons} />
                   </span>
                   <span style={{ color: COLORS.muted, fontSize: '10px' }}> (lower=safer)</span>
                 </div>
                 <div>
                   <span style={{ color: COLORS.textDim }}>Comms: </span>
                   <span style={{ color: COLORS.highlight }}>
-                    <StarRating value={site.communications} isRetro={isRetro} />
+                    <StarRating value={site.communications} icons={icons} />
                   </span>
                 </div>
               </div>

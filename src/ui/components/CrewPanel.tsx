@@ -2,6 +2,7 @@ import React from 'react';
 import type { CrewMember } from '../../engine/types';
 import { HealthStatus, CrewRole } from '../../engine/types';
 import { useTheme } from '../hooks/useTheme';
+import { useIcons } from '../hooks/useIcons';
 
 interface CrewPanelProps {
   crew: CrewMember[];
@@ -9,6 +10,7 @@ interface CrewPanelProps {
 
 export default function CrewPanel({ crew }: CrewPanelProps): React.ReactElement {
   const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
+  const icons = useIcons();
 
   const ROLE_ICONS: Record<CrewRole, string> = {
     [CrewRole.Commander]: isRetro ? '*' : '★',
@@ -71,7 +73,7 @@ export default function CrewPanel({ crew }: CrewPanelProps): React.ReactElement 
             }}>
               {ROLE_ICONS[member.role]} {member.name}
             </span>
-            {!member.isAlive && <span>{isRetro ? '[X]' : '☠️'}</span>}
+            {!member.isAlive && <span>{icons.dead}</span>}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{
