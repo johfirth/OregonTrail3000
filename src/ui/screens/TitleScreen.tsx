@@ -303,6 +303,8 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
         </div>
       </div>
 
+      {/* Settings button — hidden in Electron (use native menu instead) */}
+      {!(window as any).electronAPI?.isElectron && (
       <div style={{
         position: 'absolute',
         bottom: '20px',
@@ -322,6 +324,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
           {isRetro ? '[SETTINGS]' : icons.settings} Settings
         </button>
       </div>
+      )}
 
       <div style={{
         position: 'absolute',

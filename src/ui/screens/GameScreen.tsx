@@ -953,6 +953,8 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
 
               {/* Save & Settings buttons */}
               <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                {/* Settings button — hidden in Electron (use native menu instead) */}
+                {!(window as any).electronAPI?.isElectron && (
                 <button
                   onClick={onOpenSettings}
                   onMouseEnter={() => setHoveredBtn('settings')}
@@ -966,6 +968,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
                 >
                   {isRetro ? '[SETTINGS]' : icons.settings} Settings
                 </button>
+                )}
                 {actions.some(a => a.command === 'SAVE_GAME') && (
                   <button
                     onClick={handleSave}
