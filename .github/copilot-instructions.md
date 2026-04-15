@@ -10,7 +10,7 @@ Artemis Trail is an Oregon Trail-style text-based adventure game set as a NASA A
 
 **CRITICAL: Always delegate work to specialized agents instead of doing it yourself or using general-purpose agents.**
 
-This project uses 10 specialized agents. When a task comes in, identify which agent(s) should handle it and delegate to them. Each agent has specific ownership, tools, and expertise.
+This project uses 15 specialized agents. When a task comes in, identify which agent(s) should handle it and delegate to them. Each agent has specific ownership, tools, and expertise.
 
 ### Agent Roster
 
@@ -29,7 +29,57 @@ This project uses 10 specialized agents. When a task comes in, identify which ag
 | **QA: Edge Cases** | `qa-edge-cases.agent.md` | `tests/e2e/edge*` | Save/load, boundaries, state consistency |
 | **QA: Accessibility** | `qa-accessibility.agent.md` | `tests/e2e/accessibility*` | WCAG 2.1 compliance, axe-core audits |
 | **QA: Security** | `qa-security.agent.md` | `tests/e2e/security*` | XSS, injection, CSP, Electron security |
+| **QA: UX** | `qa-ux.agent.md` | `tests/e2e/ux-review*` | Menu flow, discoverability, UX friction |
 | **PR Reviewer** | `qa-pr-reviewer.agent.md` | Pull requests | Code review, test verification, merge approval |
+
+### Agent Skills & Tools Reference
+
+#### Development Agents
+| Agent | Primary Skills | Tools | When to Use |
+|---|---|---|---|
+| Engine Dev | TypeScript, state machines, game logic | terminal, git, npm, code-search | Core engine changes, new commands, state modifications |
+| Systems Dev | Game systems, balance tuning | terminal, git, npm, code-search | Resource/health/EVA/trading/landing/weather/scoring changes |
+| Content Dev | Data modeling, JSON schemas | terminal, git, code-search | Event data, crew data, narrative text changes |
+| UI Dev | React, CSS, accessibility, Playwright | terminal, git, npm, playwright | Screen components, styling, keyboard nav, theme changes |
+| Infra Dev | Docker, Electron, CI/CD, nginx | terminal, git, npm, docker | Build pipeline, deployment, packaging, config |
+| Security Dev | OWASP, CSP, input validation | terminal, git, npm, code-search | Security-only fixes, never gameplay |
+
+#### QA Agents
+| Agent | Testing Specialty | Tools | Test Files |
+|---|---|---|---|
+| QA Gameplay | Full game loop, win/loss paths | playwright, docker | tests/e2e/gameplay*, full-playthrough* |
+| QA Events | Event triggers, choices, chains | playwright, docker | tests/e2e/events* |
+| QA UI | Rendering, navigation, themes | playwright, docker | tests/e2e/ui*, retro-theme* |
+| QA Edge Cases | Save/load, boundaries, RNG | playwright, docker | tests/e2e/edge-cases* |
+| QA Accessibility | WCAG 2.1, axe-core, contrast | playwright, axe-core, docker | tests/e2e/accessibility* |
+| QA Security | XSS, injection, Electron | playwright, docker | tests/e2e/security* |
+| QA UX | Menus, flow, discoverability | playwright, docker | tests/e2e/ux-review* |
+
+#### Review Agents
+| Agent | Review Type | Scope |
+|---|---|---|
+| PR Reviewer | Code review, test verification | Pull requests before merge |
+| Game Designer | Game design documents | game-design/ folder only, .md files only |
+
+### Subagent Delegation — MANDATORY
+
+**⚠️ CRITICAL: ALWAYS use specialized agents. NEVER use general-purpose agents when a specialized agent exists.**
+
+#### Delegation Decision Tree
+1. Is this a game design task? → **Game Designer** agent
+2. Is this an engine/state change? → **Engine Dev** agent
+3. Is this a UI/screen change? → **UI Dev** agent
+4. Is this a build/deploy issue? → **Infra Dev** agent
+5. Is this a security fix? → **Security Dev** agent
+6. Is this testing? → Use the appropriate **QA agent** (Gameplay/Events/UI/Edge Cases/A11y/Security/UX)
+7. Is this a code review? → **PR Reviewer** agent
+8. Does it touch multiple areas? → Dispatch MULTIPLE specialized agents in parallel
+9. Is it truly novel and doesn't fit any agent? → Only THEN use general-purpose
+
+#### Fleet Patterns
+- **Testing sprint**: Dispatch all 7 QA agents in parallel, each testing their specialty
+- **Bug fix cycle**: QA agent finds bug → files issue → Dev agent fixes → QA re-tests
+- **Feature work**: Designer creates doc → Dev agents implement → QA agents test → PR Reviewer merges
 
 ### Delegation Rules
 
@@ -91,7 +141,7 @@ The project uses the Playwright MCP server for browser automation in QA testing.
 
 ```
 .github/
-├── agents/              # 14 specialized agent definitions
+├── agents/              # 15 specialized agent definitions
 ├── instructions/        # Scoped instructions (game-design, development)
 ├── references/          # Oregon Trail source, design patterns
 └── copilot-instructions.md  # THIS FILE — repo-wide rules
