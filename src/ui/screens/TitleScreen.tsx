@@ -42,7 +42,7 @@ const DIFFICULTY_DESCRIPTIONS: Record<Difficulty, { label: string; budget: numbe
 };
 
 export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onOpenSettings }: TitleScreenProps): React.ReactElement {
-  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
   const [commanderName, setCommanderName] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Astronaut);
   const [showIntro, setShowIntro] = useState(false);
@@ -79,7 +79,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
         alignItems: 'center',
         justifyContent: 'center',
         padding: '40px',
-        background: `linear-gradient(180deg, ${COLORS.bgDark} 0%, ${COLORS.bg} 100%)`,
+        background: isRetro ? COLORS.bg : `linear-gradient(180deg, ${COLORS.bgDark} 0%, ${COLORS.bg} 100%)`,
       }}>
         <div style={{
           maxWidth: '700px',
@@ -114,14 +114,14 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
       alignItems: 'center',
       justifyContent: 'center',
       padding: '40px',
-      background: `linear-gradient(180deg, ${COLORS.bgDark} 0%, ${COLORS.bg} 50%, ${COLORS.bgPanel} 100%)`,
+      background: isRetro ? COLORS.bg : `linear-gradient(180deg, ${COLORS.bgDark} 0%, ${COLORS.bg} 50%, ${COLORS.bgPanel} 100%)`,
     }}>
       {/* Mission Patch Border */}
       <div style={{
-        border: `2px solid ${COLORS.borderLight}`,
-        borderRadius: '12px',
-        padding: '32px 48px',
-        boxShadow: `0 0 30px rgba(11, 61, 145, 0.4), inset 0 0 30px rgba(11, 61, 145, 0.1)`,
+        border: isRetro ? `1px solid ${COLORS.text}` : `2px solid ${COLORS.borderLight}`,
+        borderRadius: isRetro ? '0' : '12px',
+        padding: isRetro ? '16px 24px' : '32px 48px',
+        boxShadow: isRetro ? 'none' : `0 0 30px ${COLORS.bgPanel}66, inset 0 0 30px ${COLORS.bgPanel}1A`,
         textAlign: 'center',
       }}>
         {/* ASCII Title */}
@@ -131,7 +131,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
           lineHeight: '1.2',
           textAlign: 'center',
           marginBottom: '8px',
-          textShadow: `0 0 15px rgba(0, 180, 216, 0.5)`,
+          textShadow: isRetro ? 'none' : `0 0 15px ${COLORS.info}80`,
           fontFamily: FONTS.mono,
           fontWeight: 'normal',
           whiteSpace: 'pre',
@@ -232,7 +232,7 @@ export default function TitleScreen({ onStartGame, onLoadGame, hasSavedGame, onO
               padding: '12px 32px',
               letterSpacing: '2px',
               fontFamily: FONTS.display,
-              ...(hoveredBtn === 'start' && commanderName.trim() ? { backgroundColor: '#E0351D' } : {}),
+              ...(hoveredBtn === 'start' && commanderName.trim() ? BASE_STYLES.buttonHover : {}),
             }}
           >
             🚀 NEW MISSION

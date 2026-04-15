@@ -7,8 +7,8 @@ export const RETRO_THEME = {
     bgDark: '#000088',
     text: '#FFFFFF',
     textDim: '#AAAAAA',
-    muted: '#888888',
-    accent: '#FFFF55',
+    muted: '#55FFFF',         // Cyan — good contrast on blue background
+    accent: '#FFFF55',        // Yellow for text highlights only
     success: '#55FF55',
     warning: '#FFFF55',
     danger: '#FF5555',
@@ -17,15 +17,15 @@ export const RETRO_THEME = {
     stressed: '#FFFF55',
     ill: '#FF5555',
     critical: '#FF5555',
-    dead: '#888888',
-    border: '#5555FF',
-    borderLight: '#5555FF',
-    buttonBg: '#000088',
-    buttonHover: '#0000CC',
-    highlight: '#FFFF55',
+    dead: '#AAAAAA',
+    border: '#FFFFFF',        // White borders (DOS style)
+    borderLight: '#AAAAAA',
+    buttonBg: 'transparent',  // No colored button backgrounds
+    buttonHover: '#000088',   // Subtle darker blue
+    highlight: '#FFFF55',     // Yellow text — never as background
   },
   fonts: {
-    mono: "'Perfect DOS VGA 437', 'Courier New', Courier, monospace",
-    display: "'Perfect DOS VGA 437', 'Courier New', Courier, monospace",
+    mono: "'Courier New', Courier, monospace",
+    display: "'Courier New', Courier, monospace",
   },
 };

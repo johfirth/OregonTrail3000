@@ -3,16 +3,104 @@ import { useMemo, useEffect } from 'react';
 import { useSettings } from './useSettings';
 import { getTheme } from '../themes';
 import type { Theme } from '../themes';
+import { ThemeMode } from '../../engine/types';
 
 export interface ThemeStyles {
   COLORS: Theme['colors'];
   FONTS: Theme['fonts'];
   BASE_STYLES: ReturnType<typeof createBaseStyles>;
+  isRetro: boolean;
 }
 
-function createBaseStyles(theme: Theme) {
+function createBaseStyles(theme: Theme, isRetro: boolean) {
   const COLORS = theme.colors;
   const FONTS = theme.fonts;
+
+  if (isRetro) {
+    return {
+      container: {
+        backgroundColor: COLORS.bg,
+        color: COLORS.text,
+        fontFamily: FONTS.mono,
+        minHeight: '100vh',
+        fontSize: '14px',
+        lineHeight: '1.6',
+      } as React.CSSProperties,
+
+      panel: {
+        backgroundColor: 'transparent',
+        border: `1px solid ${COLORS.text}`,
+        padding: '8px',
+        borderRadius: '0',
+        boxShadow: 'none',
+        marginBottom: '8px',
+      } as React.CSSProperties,
+
+      button: {
+        backgroundColor: 'transparent',
+        color: COLORS.info,
+        border: 'none',
+        padding: '2px 4px',
+        fontFamily: FONTS.mono,
+        fontSize: 'inherit',
+        cursor: 'pointer',
+        borderRadius: '0',
+        boxShadow: 'none',
+        transition: 'none',
+        textDecoration: 'none',
+        outline: 'none',
+      } as React.CSSProperties,
+
+      buttonHover: {
+        backgroundColor: COLORS.bgDark,
+        color: COLORS.highlight,
+      } as React.CSSProperties,
+
+      buttonDisabled: {
+        backgroundColor: 'transparent',
+        color: COLORS.textDim,
+        border: 'none',
+        padding: '2px 4px',
+        fontFamily: FONTS.mono,
+        fontSize: 'inherit',
+        cursor: 'default',
+        borderRadius: '0',
+        boxShadow: 'none',
+        opacity: 0.5,
+      } as React.CSSProperties,
+
+      buttonDanger: {
+        backgroundColor: 'transparent',
+        color: COLORS.danger,
+        border: 'none',
+        padding: '2px 4px',
+        fontFamily: FONTS.mono,
+        cursor: 'pointer',
+        borderRadius: '0',
+        boxShadow: 'none',
+      } as React.CSSProperties,
+
+      input: {
+        backgroundColor: '#000000',
+        color: COLORS.text,
+        border: `1px solid ${COLORS.text}`,
+        padding: '4px 8px',
+        fontFamily: FONTS.mono,
+        fontSize: 'inherit',
+        borderRadius: '0',
+        outline: 'none',
+        boxShadow: 'none',
+      } as React.CSSProperties,
+
+      heading: {
+        color: COLORS.text,
+        fontFamily: FONTS.mono,
+        textTransform: 'uppercase' as const,
+        letterSpacing: '0px',
+        fontWeight: 'normal',
+      },
+    };
+  }
 
   return {
     container: {
@@ -98,10 +186,12 @@ export function useTheme(): ThemeStyles {
 
   const styles = useMemo(() => {
     const theme = getTheme(settings.theme);
+    const isRetro = settings.theme === ThemeMode.Retro80s;
     return {
       COLORS: theme.colors,
       FONTS: theme.fonts,
-      BASE_STYLES: createBaseStyles(theme),
+      BASE_STYLES: createBaseStyles(theme, isRetro),
+      isRetro,
     };
   }, [settings.theme]);
 

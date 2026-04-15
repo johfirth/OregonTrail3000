@@ -16,7 +16,7 @@ interface GameScreenProps {
 }
 
 export default function GameScreen({ state, narrative, actions, onCommand, onOpenSettings }: GameScreenProps): React.ReactElement {
-  const { COLORS, FONTS, BASE_STYLES } = useTheme();
+  const { COLORS, FONTS, BASE_STYLES, isRetro } = useTheme();
   const { settings } = useSettings();
   const [showCrew, setShowCrew] = useState(true);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
@@ -437,7 +437,7 @@ export default function GameScreen({ state, narrative, actions, onCommand, onOpe
         <div style={{
           width: (showCrew && settings.showCrewPanel) ? '220px' : '30px',
           borderLeft: `1px solid ${COLORS.border}`,
-          transition: 'width 0.2s',
+          transition: isRetro ? 'none' : 'width 0.2s',
           overflow: 'hidden',
           flexShrink: 0,
         }}>
